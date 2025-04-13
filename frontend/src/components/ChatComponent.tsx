@@ -136,21 +136,36 @@ export default function ChatCompoennt({
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'cat' ? 'outline-2 opacity-100' : 'outline-0 opacity-20'
 							}`}
-							onClick={() => !isConnecting && !sessionStarted && setSelectedAnimal('cat') && setConfigId(configs.cat)}
+							onClick={() => {
+								if (!isConnecting && !sessionStarted) {
+									setSelectedAnimal('cat');
+									setConfigId(configs.cat);
+								}
+							}}
 						/>
 						<img
 							src="bee.jpg"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'bee' ? 'outline-2 opacity-100' : 'outline-0 opacity-20'
 							}`}
-							onClick={() => !isConnecting && !sessionStarted && setSelectedAnimal('bee') && setConfigId(configs.bee)}
+							onClick={() => {
+								if (!isConnecting && !sessionStarted) {
+									setSelectedAnimal('bee');
+									setConfigId(configs.bee);
+								}
+							}}
 						/>
 						<img
 							src="frog.png"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'frog' ? 'outline-2 opacity-100' : 'outline-0 opacity-20'
 							}`}
-							onClick={() => !isConnecting && !sessionStarted && setSelectedAnimal('frog') && setConfigId(configs.frog)}
+							onClick={() => {
+								if (!isConnecting && !sessionStarted) {
+									setSelectedAnimal('frog');
+									setConfigId(configs.frog);
+								}
+							}}
 						/>
 					</div>
 					<button
