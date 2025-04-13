@@ -18,7 +18,7 @@ import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
 import { WandSparkles } from 'lucide-react';
 
-export default function ChatCompoennt() {
+export default function ChatCompoennt({ selected } : {selected: string | string[] | undefined}) {
 	const [muted, setMuted] = useState(false);
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
@@ -26,7 +26,7 @@ export default function ChatCompoennt() {
 	const [id, setId] = useState('');
 	const anchorRef = useRef<null | HTMLDivElement>(null);
 	const [summary, setSummary] = useState('');
-	const [selectedAnimal, setSelectedAnimal] = useState('cat');
+	const [selectedAnimal, setSelectedAnimal] = useState(typeof selected === 'string' ? selected : 'cat');
 	const [isOpen, setIsOpen] = useState(false);
 	const [previousMessages, setPreviousMessages] = useState<any[]>([]);
 

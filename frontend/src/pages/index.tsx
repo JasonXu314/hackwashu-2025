@@ -21,7 +21,7 @@ const Home = () => {
 				Mindcraft blends <span className='text-[#95B5E5]'>well-being</span> with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
 					as a unique, mob-themed character.
 				</p>
-				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-full font-bold text-xl hover:bg-primaryhover' href="chat">
+				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-full font-bold text-xl hover:bg-primaryhover' href="choose">
 					Start chatting
 				</Link>
 			</div>

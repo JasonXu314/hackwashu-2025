@@ -5,6 +5,8 @@ import { InferGetServerSidePropsType } from 'next';
 import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import ChatCompoennt from '@/components/ChatComponent';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
@@ -31,9 +33,12 @@ export const getServerSideProps = async () => {
 type PageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 export default function Page({ accessToken }: PageProps) {
+    const router = useRouter();
+    const { selected } = router.query;
+
 	return (
 		<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId="60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161">
-			<ChatCompoennt/>
+			<ChatCompoennt selected={selected}/>
 		</VoiceProvider>
 	);
 }
