@@ -13,12 +13,12 @@ const ChatMessage = ({ messages, author, time }: Message) => {
 			{/* Message Block */}
 			<div className="flex flex-col flex-1 min-w-0">
 				<div className="flex gap-3 items-center">
-					<p className="font-bold text-lg">{author === 'user' ? 'You' : 'TheraPuss'}</p>
-					<p className="text-[#666666] font-medium text-sm">5:00pm</p>
+					<p className="font-bold text-lg text-white">{author === 'user' ? 'You' : 'TheraPuss'}</p>
+					<p className="text-neutral-400 font-medium text-sm">5:00pm</p>
 				</div>
 				<div className="flex flex-col gap-1">
 					{messages.map((message, index) => (
-						<div className="whitespace-pre-wrap break-words text-base text-gray-800 bg-gray-100 rounded-lg px-4 py-2">{message}</div>
+						<div className="whitespace-pre-wrap break-words text-base text-white bg-neutral-800 rounded-lg px-4 py-2">{message}</div>
 					))}
 				</div>
 			</div>

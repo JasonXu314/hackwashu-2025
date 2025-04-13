@@ -189,46 +189,16 @@ export default function Page({ accessToken }: PageProps) {
 					</button> */}
 				</div>
 			</div>
-			<div className="bg-white w-1/4 flex flex-col gap-6">
-				<p className="text-center border-b-2 p-6 font-bold text-xl">Session Chat</p>
+			<div className="bg-neutral-900 w-1/4 flex flex-col gap-6">
+				<p className="text-center border-b-2 p-6 font-bold text-xl text-white border-neutral-600">Session Chat</p>
 				<div className="flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full">
 					{chatMessages.map((message, index) => (
 						<ChatMessage key={index} messages={message.messages} author={message.author} time={message.time} />
 					))}
-					{/* <ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" author="user" />
-					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" author="user" />
-					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" author="user" />
-					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" author="cat" /> */}
 				</div>
-				{/* <form
-					className="w-full border-t-2 mt-auto flex items-center"
-					onSubmit={(e) => {
-						e.preventDefault();
-						sendMessage();
-					}}
-				>
-					<textarea
-						className="w-full h-full p-6 outline-none"
-						value={currentMessage}
-						onChange={(e) => {
-							setCurrentMessage(e.target.value);
-						}}
-						placeholder="Enter message..."
-					></textarea>
-					<button
-						className="mx-6"
-						type="submit"
-						onClick={(e) => {
-							e.preventDefault();
-							sendMessage();
-						}}
-					>
-						<Send className="text-primary hover:cursor-pointer hover:text-primaryhover" size={32} />
-					</button>
-				</form> */}
-				<div className="w-full border-t-2 mt-auto flex items-center">
+				<div className="w-full border-t-2 mt-auto flex items-center border-neutral-600">
 					<TextareaAutosize
-						className="p-6 rounded-[5px] w-full outline-none border-none resize-none"
+						className="p-6 rounded-[5px] w-full outline-none border-none resize-none bg-darkgray text-white"
 						minRows={1}
 						maxRows={10}
 						placeholder="Enter message..."
@@ -237,16 +207,6 @@ export default function Page({ accessToken }: PageProps) {
 						maxLength={2000}
 						value={currentMessage}
 					/>
-					{/* <button
-						className="m-4 self-start"
-						type="submit"
-						onClick={(e) => {
-							e.preventDefault();
-							sendMessage();
-						}}
-					>
-						<Send className="text-primary hover:cursor-pointer hover:text-primaryhover" size={32} />
-					</button> */}
 				</div>
 			</div>
 		</div>
