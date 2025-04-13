@@ -89,6 +89,7 @@ export default function Page({ accessToken }: PageProps) {
 						ws.send(toB64(buf));
 					} catch {
 						node.port.onmessage = null;
+						ctx.close();
 					}
 				};
 
