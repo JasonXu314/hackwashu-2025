@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect, useState, ReactNode } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+interface ThreeSceneProps {
+  children?: ReactNode;
+}
+
 const loader = new GLTFLoader();
 
-const ThreeScene: React.FC<React.PropsWithChildren> = () => {
-	const [isPlaying, setIsPlaying] = useState(false);
-	const containerRef = useRef<HTMLDivElement>(null);
+const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
 	const mixerRef = useRef<THREE.AnimationMixer | null>(null);
 	const actionRef = useRef<THREE.AnimationAction | null>(null);
@@ -87,14 +91,21 @@ const ThreeScene: React.FC<React.PropsWithChildren> = () => {
 		setIsPlaying(!isPlaying);
 	};
 
-	return (
-		<>
-			<div ref={containerRef} className="w-60 h-60 bg-neutral-200 rounded-3xl" />
-			<button onClick={talk} className="bg-black w-fit text-white px-4 py-2 rounded-md mt-2">
-				{isPlaying ? 'Stop' : 'Play'}
-			</button>
-		</>
-	);
+  return (
+    <>
+      <div
+        ref={containerRef}
+        className="w-full h-full bg-neutral-200 rounded-3xl relative"
+      >
+        {/* Render children as an overlay */}
+        {children && (
+          <div className="">
+            {children}
+          </div>
+        )}
+      </div>
+    </>
+  );
 };
 
 export default ThreeScene;
