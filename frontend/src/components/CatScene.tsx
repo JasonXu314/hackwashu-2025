@@ -21,7 +21,7 @@ const animalConfigs: Record<string, ModelConfig> = {
         positionY: -0.7,
         positionX: 0.1,
         scale: 0.5,
-        animationName: 'talking',
+        animationName: 'Talking',
     },
 	bee: {
         path: '/Bee.glb',
@@ -43,13 +43,13 @@ const animalConfigs: Record<string, ModelConfig> = {
         animationName: 'talking',
     },
     default: {
-        path: '/Calico_Sit.glb',
+        path: '/Calico.glb',
         rotationY: Math.PI + 0.5,
         rotationX: 0.2,
         positionY: -0.7,
         positionX: 0.1,
         scale: 0.5,
-        animationName: 'talking',
+        animationName: 'Talking',
     },
 };
 
@@ -62,7 +62,6 @@ interface ThreeSceneProps {
 
 const loader = new GLTFLoader();
 const FADE_DURATION = 0.4;
-
 
 const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -96,9 +95,11 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
 
         const scene = new THREE.Scene();
         sceneRef.current = scene;
+
         const camera = new THREE.PerspectiveCamera(20, width / height, 1, 1000);
         camera.position.z = 5;
         cameraRef.current = camera;
+
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(width, height);
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -147,7 +148,6 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
         };
     }, []);
 
-
     useEffect(() => {
         const scene = sceneRef.current;
         if (!scene) return;
@@ -162,7 +162,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
 
         const config = currentModelConfig;
         if (!config?.path) {
-            console.error(`No valid config for animalType: ${animalType}`);
+            console.error(`No valid config or path found for animalType: ${animalType}`);
             return;
         }
 
@@ -175,21 +175,26 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
                 modelRef.current = model;
                 sceneRef.current.add(model);
 
-                model.rotation.y = config.rotationY ?? 0; model.rotation.x = config.rotationX ?? 0;
-                model.position.y = config.positionY ?? 0; model.position.x = config.positionX ?? 0;
-                const scale = config.scale ?? 1; model.scale.set(scale, scale, scale);
+                model.rotation.y = config.rotationY ?? 0;
+                model.rotation.x = config.rotationX ?? 0;
+                model.position.y = config.positionY ?? 0;
+                model.position.x = config.positionX ?? 0;
+                const scale = config.scale ?? 1;
+                model.scale.set(scale, scale, scale);
 
                 if (gltf.animations?.length > 0) {
                     const mixer = new THREE.AnimationMixer(model);
                     mixerRef.current = mixer;
 
                     let talkingClip: THREE.AnimationClip | null = null;
+
                     if (config.animationName) {
                         talkingClip = THREE.AnimationClip.findByName(gltf.animations, config.animationName);
-                        if (!talkingClip) console.warn(`Talking clip "${config.animationName}" not found.`);
+                        if (!talkingClip) console.warn(`Talking animation clip "${config.animationName}" not found in ${config.path}.`);
                     }
 
                     if (!talkingClip && !isBeeWithDualIdle && gltf.animations.length > 0) {
+                        console.warn(`Using first animation clip as fallback talking animation for ${config.path}.`);
                         talkingClip = gltf.animations[0];
                     }
 
@@ -198,7 +203,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
                          talkingActionRef.current.loop = THREE.LoopRepeat;
                          talkingActionRef.current.clampWhenFinished = true;
                     } else if (!isBeeWithDualIdle) {
-                         console.warn(`No primary/talking animation found for ${config.path}`);
+                         console.warn(`No primary/talking animation action could be set up for ${config.path}`);
                     }
 
                     if (isBeeWithDualIdle && config.idleAnimationNames) {
@@ -216,9 +221,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
                             idleAction2Ref.current.loop = THREE.LoopRepeat;
                             idleAction2Ref.current.clampWhenFinished = true;
                         } else console.warn(`Idle clip "${config.idleAnimationNames[1]}" not found for bee.`);
-                    }
 
-                    if (isBeeWithDualIdle) {
                         const talkingAction = talkingActionRef.current;
                         const idle1 = idleAction1Ref.current;
                         const idle2 = idleAction2Ref.current;
@@ -228,29 +231,32 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
 
                         if (talkingAction) {
                             talkingAction.play().setEffectiveWeight(0);
-                            if (playing) {
-                                idle1?.fadeOut(FADE_DURATION);
-                                idle2?.fadeOut(FADE_DURATION);
-                                talkingAction.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
-                            }
-                        } else {
-                           if (playing) {
-                                console.warn("Bee is set to 'playing' but no talking animation clip found.");
-                           }
                         }
+
+                        if (playing && talkingAction) {
+                            idle1?.fadeOut(FADE_DURATION);
+                            idle2?.fadeOut(FADE_DURATION);
+                            talkingAction.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
+                        } else if (playing && !talkingAction) {
+                             console.warn("Bee is set to 'playing' initially, but no talking animation clip was found.");
+                        }
+
                     } else {
                          const talkingAction = talkingActionRef.current;
                          if (talkingAction) {
                              talkingAction.play();
                              talkingAction.paused = !playing;
                              talkingAction.setEffectiveWeight(1);
+                             if (!playing && talkingAction.getClip().duration > 0) {
+                                talkingAction.time = 0;
+                             }
                          } else {
                              console.warn(`No animation action available to play for ${config.path}`);
                          }
                     }
 
                 } else {
-                    console.warn(`No animations found in ${config.path}`);
+                    console.warn(`No animations found in the loaded model: ${config.path}`);
                 }
             },
             undefined,
@@ -265,21 +271,37 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
         const idle1 = idleAction1Ref.current;
         const idle2 = idleAction2Ref.current;
 
+        if (!mixerRef.current) return;
+
         if (isBeeWithDualIdle && talkingAction && idle1 && idle2) {
             if (playing) {
                  idle1.fadeOut(FADE_DURATION);
                  idle2.fadeOut(FADE_DURATION);
-                 talkingAction.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
+                 if (talkingAction.getEffectiveWeight() < 1.0) {
+                    talkingAction.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
+                 }
             } else {
                  talkingAction.fadeOut(FADE_DURATION);
-                 idle1.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
-                 idle2.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
+                 if (idle1.getEffectiveWeight() < 1.0) {
+                    idle1.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
+                 }
+                 if (idle2.getEffectiveWeight() < 1.0) {
+                    idle2.reset().setEffectiveWeight(1).fadeIn(FADE_DURATION);
+                 }
             }
-        } else if (talkingAction) {
+        }
+        else if (talkingAction) {
              talkingAction.paused = !playing;
-             if (!playing && talkingAction.time === 0 && talkingAction.getClip().duration > 0) {
-                 // Optional: If paused at the start, maybe reset to frame 0
-                 // talkingAction.reset(); // uncomment if needed
+
+             if (!playing) {
+                 if (talkingAction.getClip().duration > 0) {
+                    talkingAction.time = 0;
+                 }
+             } else {
+                 if (!talkingAction.isRunning()) {
+                    talkingAction.play();
+                 }
+                 talkingAction.setEffectiveWeight(1);
              }
         }
 
@@ -290,7 +312,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing, animalType }
         <div className="relative w-full h-full drop-shadow-[0_0_45px_rgba(255,255,255,.1)]">
             <video src="/background.mp4" loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover rounded-3xl"></video>
             <div ref={containerRef} className="relative w-full h-full rounded-3xl z-10">
-                {children && <div className="absolute top-0 left-0 w-full h-full pointer-events-none">{children}</div>}
+                {children && <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-20">{children}</div>}
             </div>
         </div>
     );
