@@ -3,13 +3,15 @@ import Scene from '@/components/CatScene';
 import ChatMessage, { Message } from '@/components/ChatMessage';
 import Logo from '@/components/Logo';
 import UserCamera from '@/components/UserCamera';
+import api from '@/lib/axiosConfig';
 import { GeminiProcessor } from '@/lib/GeminiProcessor';
 import { toB64, toF32Audio } from '@/lib/utils';
 import { TextareaAutosize } from '@mui/material';
 import { fetchAccessToken } from 'hume';
 import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
 import { InferGetServerSidePropsType } from 'next';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
@@ -41,7 +43,26 @@ export default function Page({ accessToken }: PageProps) {
 	const [currentMessage, setCurrentMessage] = useState('');
 	const [chatMessages, setChatMessages] = useState<Message[]>([]);
 	const [chatPlaying, setChatPlaying] = useState(false);
+	const [id, setId] = useState('');
 	const ref = useRef<WebSocket | null>(null);
+    const anchorRef = useRef<null | HTMLDivElement>(null);
+
+	// '/begin' - post for an id
+	// '/prompt' - id and msg
+
+	useEffect(() => {
+		api.post('/begin')
+			.then((res) => {
+				setId(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [chatMessages]);
 
 	const onKeyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -50,18 +71,73 @@ export default function Page({ accessToken }: PageProps) {
 		}
 	};
 
+    const scrollToBottom = async () => {
+        anchorRef.current?.scrollIntoView({ behavior: 'auto' });
+        // if (messageInit) {
+        //     setTimeout(() => {
+        //         setMessageInit(false);
+        //     }, 500);
+        // }
+    };
+
 	const sendMessage = () => {
-		console.log(currentMessage);
-		if (currentMessage.trim() == '') {
-			return;
-		}
+		if (currentMessage.trim() === '') return;
+
+		const userMessage = currentMessage.trim();
 		setCurrentMessage('');
-		if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1].author === 'user') {
-			chatMessages[chatMessages.length - 1].messages.push(currentMessage.trim());
-			setChatMessages([...chatMessages]);
+
+		// Create a shallow copy to avoid direct state mutation
+		let updatedMessages = [...chatMessages];
+
+		// Append user message to last user thread or create new
+		if (updatedMessages.length > 0 && updatedMessages[updatedMessages.length - 1].author === 'user') {
+			updatedMessages = updatedMessages.map((msg, index) =>
+				index === updatedMessages.length - 1
+					? {
+							...msg,
+							messages: [...msg.messages, userMessage],
+					  }
+					: msg
+			);
 		} else {
-			setChatMessages([...chatMessages, { author: 'user', messages: [currentMessage.trim()], time: new Date() }]);
+			updatedMessages.push({
+				author: 'user',
+				messages: [userMessage],
+				time: new Date(),
+			});
 		}
+
+		setChatMessages(updatedMessages);
+
+		// Send to API
+		api.post('/prompt', {
+			id: id,
+			msg: userMessage,
+		})
+			.then((res) => {
+				const aiResponse = res.data;
+
+				// Append AI response to last AI thread or create new
+				setChatMessages((prev) => {
+					const newMessages = [...prev];
+					if (newMessages.length > 0 && newMessages[newMessages.length - 1].author === 'cat') {
+						newMessages[newMessages.length - 1] = {
+							...newMessages[newMessages.length - 1],
+							messages: [...newMessages[newMessages.length - 1].messages, aiResponse],
+						};
+					} else {
+						newMessages.push({
+							author: 'cat',
+							messages: [aiResponse],
+							time: new Date(),
+						});
+					}
+					return newMessages;
+				});
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 	};
 
 	const startSession = useCallback(() => {
@@ -189,16 +265,17 @@ export default function Page({ accessToken }: PageProps) {
 					</button> */}
 				</div>
 			</div>
-			<div className="bg-neutral-900 w-1/4 flex flex-col gap-6">
-				<p className="text-center border-b-2 p-6 font-bold text-xl text-white border-neutral-600">Session Chat</p>
-				<div className="flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full">
+			<div className="bg-neutral-900 w-1/4 flex flex-col">
+				<p className="text-center border-b-2 p-4 font-bold text-lg text-white border-neutral-600">Session Chat</p>
+				<div className="py-6 flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full">
 					{chatMessages.map((message, index) => (
 						<ChatMessage key={index} messages={message.messages} author={message.author} time={message.time} />
 					))}
+                    <div ref={anchorRef} />
 				</div>
 				<div className="w-full border-t-2 mt-auto flex items-center border-neutral-600">
 					<TextareaAutosize
-						className="p-6 rounded-[5px] w-full outline-none border-none resize-none bg-darkgray text-white"
+						className="p-5 rounded-[5px] w-full outline-none border-none resize-none bg-darkgray text-white text-sm"
 						minRows={1}
 						maxRows={10}
 						placeholder="Enter message..."

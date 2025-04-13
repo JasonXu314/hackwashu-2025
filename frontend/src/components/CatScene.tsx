@@ -50,7 +50,8 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing }) => {
 				gltf.scene.rotation.y = Math.PI + 0.5;
 				gltf.scene.rotation.x = 0.2;
 				gltf.scene.position.y = -0.7;
-				gltf.scene.position.x = -0.05;
+				gltf.scene.position.x = 0.1;
+                gltf.scene.scale.set(0.5, 0.5, 0.5);
 
 				if (gltf.animations.length > 0) {
 					const mixer = new THREE.AnimationMixer(gltf.scene);
