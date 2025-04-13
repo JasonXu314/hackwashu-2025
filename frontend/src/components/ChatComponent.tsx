@@ -37,6 +37,7 @@ export default function ChatCompoennt({
 	const [isOpen, setIsOpen] = useState(false);
 	const [previousMessages, setPreviousMessages] = useState<any[]>([]);
 	const [previousSelectedAnimal, setPreviousSelectedAnimal] = useState<string>('');
+	const [jukePlaying, setJukePlaying] = useState(false);
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
 
@@ -168,6 +169,20 @@ export default function ChatCompoennt({
 							}}
 						/>
 					</div>
+					<img src="jukebox.webp" 
+						className={`
+							h-14 w-auto hover:scale-95 transition-all duration-75 cursor-pointer z-20
+							${jukePlaying ? 'filter-none' : 'grayscale'}
+							hover:scale-95
+						  `}
+						onClick={() => {
+							if (jukePlaying) {
+								setJukePlaying(false);
+							} else {
+								setJukePlaying(true);
+							}
+						  }}
+					/>
 					<button
 						className={`
 							p-4 rounded-full ml-auto
@@ -266,6 +281,9 @@ export default function ChatCompoennt({
 					)}
 					<div ref={anchorRef} />
 				</div>
+				{jukePlaying && (
+        			<audio src="c418.mp3" loop autoPlay></audio>
+      			)}
 				<div className="w-full border-t-2 mt-auto flex items-center border-neutral-600">
 					<TextareaAutosize
 						className="p-5 rounded-[5px] w-full outline-none border-none resize-none bg-darkgray text-white text-sm"
