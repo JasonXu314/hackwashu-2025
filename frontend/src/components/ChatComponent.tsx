@@ -14,6 +14,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
+import SummaryModal from '@/components/SummaryModal';
 
 export default function ChatCompoennt() {
 	const [muted, setMuted] = useState(false);
@@ -23,6 +24,8 @@ export default function ChatCompoennt() {
 	const [chatPlaying, setChatPlaying] = useState(false);
 	const [id, setId] = useState('');
 	const anchorRef = useRef<null | HTMLDivElement>(null);
+	const [isOpen, setIsOpen] = useState(true);
+	const [summaryContent, setSummaryContent] = useState("");
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput } = useVoice();
 
@@ -117,6 +120,7 @@ export default function ChatCompoennt() {
 
 	return (
 		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-row">
+			{isOpen && <SummaryModal summary={summaryContent} onClose={() => setIsOpen(false)} />}
 			<Logo mode="light" />
 			<div className="w-3/4 flex flex-col p-8 pt-24 gap-8 relative">
 				<Scene playing={chatPlaying}>
