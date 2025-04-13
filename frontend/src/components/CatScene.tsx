@@ -4,136 +4,112 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 interface ThreeSceneProps {
-  children?: ReactNode;
-  playing: boolean;
+	children?: ReactNode;
+	playing: boolean;
 }
 
 const loader = new GLTFLoader();
 
 const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 
-  const mixerRef = useRef<THREE.AnimationMixer | null>(null);
-  const actionRef = useRef<THREE.AnimationAction | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const controlsRef = useRef<OrbitControls | null>(null);
-  const requestIdRef = useRef<number>();
+	const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+	const actionRef = useRef<THREE.AnimationAction | null>(null);
+	const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+	const controlsRef = useRef<OrbitControls | null>(null);
+	const requestIdRef = useRef<number>();
 
-  useEffect(() => {
-    if (!containerRef.current) return;
+	useEffect(() => {
+		if (!containerRef.current) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      20,
-      containerRef.current.clientWidth / containerRef.current.clientHeight,
-      1,
-      1000
-    );
-    camera.position.z = 5;
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(20, containerRef.current.clientWidth / containerRef.current.clientHeight, 1, 1000);
+		camera.position.z = 5;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(
-      containerRef.current.clientWidth,
-      containerRef.current.clientHeight
-    );
-    containerRef.current.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+		const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+		renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+		containerRef.current.appendChild(renderer.domElement);
+		rendererRef.current = renderer;
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controlsRef.current = controls;
+		const controls = new OrbitControls(camera, renderer.domElement);
+		controlsRef.current = controls;
 
-    const light1 = new THREE.DirectionalLight("#e6f2fd", 3);
-    const light2 = new THREE.DirectionalLight("#e6f2fd", 3);
-    const ambient = new THREE.AmbientLight("#e6f2fd", 1);
-    light1.position.set(-5, 5, 5);
-    light2.position.set(5, 5, 5);
-    scene.add(light1, light2, ambient);
+		const light1 = new THREE.DirectionalLight('#e6f2fd', 3);
+		const light2 = new THREE.DirectionalLight('#e6f2fd', 3);
+		const ambient = new THREE.AmbientLight('#e6f2fd', 1);
+		light1.position.set(-5, 5, 5);
+		light2.position.set(5, 5, 5);
+		scene.add(light1, light2, ambient);
 
-    const clock = new THREE.Clock();
+		const clock = new THREE.Clock();
 
-    loader.load(
-      'Calico_Sit.glb',
-      (gltf) => {
-        scene.add(gltf.scene);
-        gltf.scene.rotation.y = Math.PI + 0.5;
-        gltf.scene.rotation.x = 0.2;
-        gltf.scene.position.y = -0.7;
-        gltf.scene.position.x = -0.05;
+		loader.load(
+			'Calico_Sit.glb',
+			(gltf) => {
+				scene.add(gltf.scene);
+				gltf.scene.rotation.y = Math.PI + 0.5;
+				gltf.scene.rotation.x = 0.2;
+				gltf.scene.position.y = -0.7;
+				gltf.scene.position.x = -0.05;
 
-        if (gltf.animations.length > 0) {
-          const mixer = new THREE.AnimationMixer(gltf.scene);
-          const clip =
-            THREE.AnimationClip.findByName(gltf.animations, 'talking') ||
-            gltf.animations[0];
-          const action = mixer.clipAction(clip);
+				if (gltf.animations.length > 0) {
+					const mixer = new THREE.AnimationMixer(gltf.scene);
+					const clip = THREE.AnimationClip.findByName(gltf.animations, 'talking') || gltf.animations[0];
+					const action = mixer.clipAction(clip);
 
-          action.clampWhenFinished = true;
-          action.loop = THREE.LoopRepeat;
+					action.clampWhenFinished = true;
+					action.loop = THREE.LoopRepeat;
 
-          mixerRef.current = mixer;
-          actionRef.current = action;
+					mixerRef.current = mixer;
+					actionRef.current = action;
 
-          if (playing) action.play();
-        }
+					if (playing) action.play();
+				}
 
-        const animate = () => {
-          requestIdRef.current = requestAnimationFrame(animate);
-          const delta = clock.getDelta();
-          controls.update();
-          mixerRef.current?.update(delta);
-          renderer.render(scene, camera);
-        };
+				const animate = () => {
+					requestIdRef.current = requestAnimationFrame(animate);
+					const delta = clock.getDelta();
+					controls.update();
+					mixerRef.current?.update(delta);
+					renderer.render(scene, camera);
+				};
 
-        animate();
-      },
-      undefined,
-      (error) => {
-        console.error('Error loading model:', error);
-      }
-    );
+				animate();
+			},
+			undefined,
+			(error) => {
+				console.error('Error loading model:', error);
+			}
+		);
 
-    return () => {
-      if (requestIdRef.current) cancelAnimationFrame(requestIdRef.current);
-      controls.dispose();
-      renderer.dispose();
-      if (containerRef.current && renderer.domElement.parentNode) {
-        containerRef.current.removeChild(renderer.domElement);
-      }
-    };
-  }, []);
+		return () => {
+			if (requestIdRef.current) cancelAnimationFrame(requestIdRef.current);
+			controls.dispose();
+			renderer.dispose();
+			if (containerRef.current && renderer.domElement.parentNode) {
+				containerRef.current.removeChild(renderer.domElement);
+			}
+		};
+	}, []);
 
-  // Toggle animation playback
-  useEffect(() => {
-    if (playing) {
-      actionRef.current?.play();
-    } else {
-      actionRef.current?.stop();
-    }
-  }, [playing]);
+	// Toggle animation playback
+	useEffect(() => {
+		if (playing) {
+			actionRef.current?.play();
+		} else {
+			actionRef.current?.stop();
+		}
+	}, [playing]);
 
-  return (
-    <div className="relative w-full h-full">
-    <video
-      src="background.mp4"
-      loop
-      autoPlay
-      muted
-      playsInline
-      className="absolute inset-0 w-full h-full object-cover rounded-3xl"
-    ></video>
-    
-    <div
-      ref={containerRef}
-      className="relative w-full h-full rounded-3xl z-10"
-    >
-      {children && (
-        <div className="absolute top-0 left-0 w-full h-full">
-          {children}
-        </div>
-      )}
-    </div>
-  </div>
-  );
+	return (
+		<div className="relative w-full h-full drop-shadow-[0_0_45px_rgba(255,255,255,.1)]">
+			<video src="background.mp4" loop autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover rounded-3xl"></video>
+
+			<div ref={containerRef} className="relative w-full h-full rounded-3xl z-10">
+				{children && <div className="absolute top-0 left-0 w-full h-full">{children}</div>}
+			</div>
+		</div>
+	);
 };
 
 export default ThreeScene;

@@ -12,7 +12,7 @@ const Home = () => {
 				playsInline
 				className="absolute top-0 left-0 w-full h-full object-cover z-[1] opacity-30"
 			></video>
-			<Logo />
+			<Logo mode="light"/>
 			<div className='w-1/2 flex flex-col gap-8 items-center justify-center z-10'>
 				<p className="text-7xl text-white font-bold">
 					Talk to someone who <span className="text-primary">truly</span> listens

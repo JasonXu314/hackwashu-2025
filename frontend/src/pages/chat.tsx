@@ -149,8 +149,8 @@ export default function Page({ accessToken }: PageProps) {
 		// 	<Messages />
 		// 	<Controls />
 		// </VoiceProvider>
-		<div className="bg-gradient-to-r from-white via-white via-30% to-[#B4F7F8] h-screen flex flex-row">
-			<Logo />
+		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-row">
+			<Logo mode="light" />
 			<div className="w-3/4 flex flex-col p-8 pt-24 gap-8 relative">
 				<Scene playing={chatPlaying}>
 					<div className="absolute -top-8 -right-4 h-40 w-auto rounded-2xl">
