@@ -24,7 +24,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing }) => {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      15,
+      20,
       containerRef.current.clientWidth / containerRef.current.clientHeight,
       1,
       1000
@@ -112,22 +112,27 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing }) => {
   }, [playing]);
 
   return (
-    <>
+    <div className="relative w-full h-full">
+    <video
+      src="background.mp4"
+      loop
+      autoPlay
+      muted
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover rounded-3xl"
+    ></video>
+    
     <div
       ref={containerRef}
-      className="w-full h-full bg-neutral-200 rounded-3xl relative"
+      className="relative w-full h-full rounded-3xl z-10"
     >
-      {children && <div className="absolute top-0 left-0 w-full h-full">{children}</div>}
+      {children && (
+        <div className="absolute top-0 left-0 w-full h-full">
+          {children}
+        </div>
+      )}
     </div>
-    <video
-				src="background.mp4"
-				loop
-				autoPlay
-				muted
-				playsInline
-				className="absolute top-0 left-0 w-full h-full z-[1] opacity-45"
-			></video>
-    </>
+  </div>
   );
 };
 
