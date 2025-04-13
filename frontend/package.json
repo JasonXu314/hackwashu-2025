@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@humeai/voice": "^0.1.10",
     "@humeai/voice-react": "^0.1.20",
     "@mui/material": "^7.0.2",
     "axios": "^1.8.4",

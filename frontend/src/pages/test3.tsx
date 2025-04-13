@@ -6,11 +6,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { InferGetServerSidePropsType } from 'next';
 import { fetchAccessToken } from 'hume';
+import { Hume, HumeClient } from 'hume';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
-		apiKey: String(process.env.HUME_API_KEY),
-		secretKey: String(process.env.HUME_SECRET_KEY),
+		apiKey: String(process.env.NEXT_PUBLIC_HUME_API_KEY),
+		secretKey: String(process.env.NEXT_PUBLIC_HUME_SECRET_KEY),
 	});
 
 	if (!accessToken) {
@@ -37,6 +38,15 @@ export default function VoiceTherapist({ accessToken }: PageProps) {
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const [messages, setMessages] = useState<string[]>([]);
 
+	// const client = new HumeClient({
+	// 	apiKey: process.env.NEXT_PUBLIC_HUME_API_KEY!,
+	// 	secretKey: process.env.NEXT_PUBLIC_HUME_SECRET_KEY!,
+	// });
+
+	// const socket = await client.empathicVoice.chat.connect({
+	//     configId: '60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161'
+	//   });
+
 	useEffect(() => {
 		if (!navigator.mediaDevices.getUserMedia) return;
 
@@ -47,8 +57,9 @@ export default function VoiceTherapist({ accessToken }: PageProps) {
 			socketRef.current?.send(
 				JSON.stringify({
 					type: 'start',
+					// configId: '60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161',
 					config: {
-						response: { mode: 'text', speak: false },
+						response: { mode: 'text', speak: true },
 						insightTypes: ['emotion'],
 						audio: true,
 					},
@@ -58,7 +69,7 @@ export default function VoiceTherapist({ accessToken }: PageProps) {
 
 		socketRef.current.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-            console.log(data)
+			console.log(data);
 			if (data.type === 'evi_response') {
 				setMessages((prev) => [...prev, `🧠 ${data.message.content}`]);
 			}

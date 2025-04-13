@@ -1,7 +1,7 @@
 // ./components/Controls.tsx
 import { useVoice, VoiceReadyState } from "@humeai/voice-react";
 export default function Controls() {
-  const { connect, disconnect, readyState } = useVoice();
+  const { connect, disconnect, readyState, isPlaying } = useVoice();
 
   if (readyState === VoiceReadyState.OPEN) {
     return (
