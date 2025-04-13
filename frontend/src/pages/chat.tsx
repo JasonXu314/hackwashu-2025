@@ -40,6 +40,7 @@ export default function Page({ accessToken }: PageProps) {
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
 	const [chatMessages, setChatMessages] = useState<Message[]>([]);
+	const [chatPlaying, setChatPlaying] = useState(false);
 
 	const onKeyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -68,7 +69,7 @@ export default function Page({ accessToken }: PageProps) {
 			.getUserMedia({ audio: true })
 			.then(async (stream) => {
 				const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!);
-				const ctx = new AudioContext({ sampleRate: 16_000 });
+				const ctx = new AudioContext({ sampleRate: 24_000 });
 				await ctx.audioWorklet.addModule(GeminiProcessor);
 				await new Promise((resolve) => ws.addEventListener('open', resolve, { once: true }));
 
@@ -85,15 +86,17 @@ export default function Page({ accessToken }: PageProps) {
 				};
 
 				let playing = false;
+				setChatPlaying(false);
 				const buffer: Float32Array[] = [];
 
 				const flush = async () => {
 					playing = true;
+					setChatPlaying(true);
 
 					while (buffer.length > 0) {
 						const chunk = buffer.shift()!;
 
-						const buf = ctx.createBuffer(1, chunk.length, 16_000);
+						const buf = ctx.createBuffer(1, chunk.length, 24_000);
 						buf.copyToChannel(chunk, 0);
 
 						const src = ctx.createBufferSource();
@@ -115,6 +118,7 @@ export default function Page({ accessToken }: PageProps) {
 					}
 
 					playing = false;
+					setChatPlaying(false);
 				};
 
 				ws.addEventListener('message', (evt) => {
@@ -138,7 +142,7 @@ export default function Page({ accessToken }: PageProps) {
 		<div className="bg-gradient-to-r from-white via-white via-30% to-[#B4F7F8] h-screen flex flex-row">
 			<Logo />
 			<div className="w-3/4 flex flex-col p-8 pt-24 gap-8">
-				<Scene>
+				<Scene playing={chatPlaying}>
 					<div className="absolute -top-8 -right-4 h-40 w-auto rounded-2xl">
 						<UserCamera />
 					</div>
