@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@humeai/voice-react": "^0.1.20",
+    "@mui/material": "^7.0.2",
     "hume": "^0.10.0",
     "lucide-react": "^0.487.0",
     "next": "14.2.3",

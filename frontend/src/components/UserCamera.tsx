@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 function UserCamera() {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		let stream: MediaStream;
@@ -22,14 +24,16 @@ function UserCamera() {
 		return () => {
 			if (stream) {
 				stream.getTracks().forEach((track) => track.stop());
+				setLoading(false);
 			}
 			if (videoRef.current) {
+                setLoading(true);
 				videoRef.current.srcObject = null;
 			}
 		};
 	}, []);
 
-	return <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover rounded-2xl shadow" />;
+	return <video ref={videoRef} autoPlay muted playsInline className={`w-full h-full object-cover rounded-2xl ${loading ? '' : 'shadow'} scale-x-[-1]`} />;
 }
 
 export default UserCamera;
