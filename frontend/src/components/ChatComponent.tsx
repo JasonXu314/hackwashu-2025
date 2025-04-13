@@ -1,26 +1,24 @@
 import Scene from '@/components/CatScene';
-import ChatMessage, { Message } from '@/components/ChatMessage';
+import ChatMessage from '@/components/ChatMessage';
 import Logo from '@/components/Logo';
+import SummaryModal from '@/components/SummaryModal';
 import UserCamera from '@/components/UserCamera';
 import api from '@/lib/axiosConfig';
-import { TextareaAutosize } from '@mui/material';
-import { Mic, MicOff, PhoneCall } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
+import { TextareaAutosize } from '@mui/material';
+import { Loader2, Mic, MicOff, PhoneCall, WandSparkles } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ImPhoneHangUp } from 'react-icons/im';
-import SummaryModal from '@/components/SummaryModal';
-import { WandSparkles } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
 
 const configs = {
 	cat: '1186fe63-e191-4e60-8cf8-2a1c59097589',
 	bee: '60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161',
-	frog: 'a85a190a-05e7-4588-84f9-193d906fddbe',
+	frog: 'a85a190a-05e7-4588-84f9-193d906fddbe'
 };
 
 export default function ChatCompoennt({
 	selected,
-	setConfigId,
+	setConfigId
 }: {
 	selected: string | string[] | undefined;
 	setConfigId: React.Dispatch<React.SetStateAction<string>>;
@@ -29,7 +27,6 @@ export default function ChatCompoennt({
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
 	const [chatPlaying, setChatPlaying] = useState(false);
-	const [id, setId] = useState('');
 	const anchorRef = useRef<null | HTMLDivElement>(null);
 	const [summary, setSummary] = useState('');
 	const [selectedAnimal, setSelectedAnimal] = useState(typeof selected === 'string' ? selected : 'cat');
@@ -39,16 +36,6 @@ export default function ChatCompoennt({
 	const [jukePlaying, setJukePlaying] = useState(false);
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
-
-	useEffect(() => {
-		api.post('/begin')
-			.then((res) => {
-				setId(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}, []);
 
 	useEffect(() => {
 		scrollToBottom();
@@ -81,10 +68,9 @@ export default function ChatCompoennt({
 			.join('\n');
 
 		api.post('/prompt', {
-			id: id,
 			msg:
 				"I'm providing you conversation data between me (user) and someone else (assistant). Could you summarize our conversation in under 100 words. " +
-				filteredMessages,
+				filteredMessages
 		})
 			.then((res) => {
 				setSummary(res.data);
@@ -168,7 +154,8 @@ export default function ChatCompoennt({
 							}}
 						/>
 					</div>
-					<img src="jukebox.webp" 
+					<img
+						src="jukebox.webp"
 						className={`
 							h-14 w-auto hover:scale-95 transition-all duration-75 cursor-pointer z-20
 							${jukePlaying ? 'filter-none' : 'grayscale'}
@@ -180,7 +167,7 @@ export default function ChatCompoennt({
 							} else {
 								setJukePlaying(true);
 							}
-						  }}
+						}}
 					/>
 					<button
 						className={`
@@ -192,23 +179,21 @@ export default function ChatCompoennt({
 							disabled:cursor-not-allowed
 							disabled:scale-100
 						  `}
-						  onClick={() => {
+						onClick={() => {
 							if (muted) {
-							  unmute();
+								unmute();
 							} else {
-							  mute();
+								mute();
 							}
 							setMuted(!muted);
-						  }}
-						disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}
-					>
+						}}
+						disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}>
 						{muted ? <MicOff color="white" /> : <Mic />}
 					</button>
 					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
 						<button
 							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white font-semibold text-lg flex gap-3 hover:bg-red-600 hover:scale-95 transition-all duration-100"
-							onClick={handleEndSession}
-						>
+							onClick={handleEndSession}>
 							<ImPhoneHangUp size={20} />
 							End Session
 						</button>
@@ -216,8 +201,7 @@ export default function ChatCompoennt({
 						<button
 							className="items-center px-12 py-4 rounded-xl bg-primary font-semibold text-lg text-white flex gap-3 hover:bg-primaryhover disabled:opacity-70 disabled:cursor-wait hover:scale-95 transition-all duration-100"
 							onClick={handleStartSession}
-							disabled={isConnecting}
-						>
+							disabled={isConnecting}>
 							{isConnecting ? (
 								<>
 									<Loader2 size={20} className="animate-spin" />
@@ -269,8 +253,7 @@ export default function ChatCompoennt({
 										<p className="text-neutral-200 font-medium italic text-center">-- Session has been ended --</p>
 										<button
 											className="bg-gradient-to-br to-[#793BFF] from-[#CD5AFF] p-4 px-12 w-fit text-sm text-white font-medium text-center rounded-3xl flex gap-3 items-center"
-											onClick={() => setIsOpen(true)}
-										>
+											onClick={() => setIsOpen(true)}>
 											<WandSparkles size={16} />
 											Generate Summary
 										</button>
@@ -280,9 +263,7 @@ export default function ChatCompoennt({
 					)}
 					<div ref={anchorRef} />
 				</div>
-				{jukePlaying && (
-        			<audio src="c418.mp3" loop autoPlay></audio>
-      			)}
+				{jukePlaying && <audio src="c418.mp3" loop autoPlay></audio>}
 				<div className="w-full border-t-2 mt-auto flex items-center border-neutral-600">
 					<TextareaAutosize
 						className="p-5 rounded-[5px] w-full outline-none border-none resize-none bg-darkgray text-white text-sm"
@@ -300,3 +281,4 @@ export default function ChatCompoennt({
 		</div>
 	);
 }
+
