@@ -29,6 +29,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 	const [selectedAnimal, setSelectedAnimal] = useState(typeof selected === 'string' ? selected : 'cat');
 	const [isOpen, setIsOpen] = useState(false);
 	const [previousMessages, setPreviousMessages] = useState<any[]>([]);
+	const [previousSelectedAnimal, setPreviousSelectedAnimal] = useState<string>('');
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
 
@@ -94,7 +95,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 			<div className="w-3/4 flex flex-col p-8 gap-4 relative">
 				<p className="text-5xl text-white text-center font-bold">
 					Talk to{' '}
-					<span className="text-primary">{selectedAnimal === 'cat' ? 'Meowtivator' : selectedAnimal === 'bee' ? 'Therabee' : 'Fralosopher'}</span>
+					<span className="text-primary">{selectedAnimal === 'cat' ? 'Meowtivator' : selectedAnimal === 'bee' ? 'Therabee' : 'Froglosopher'}</span>
 				</p>
 				<Scene playing={chatPlaying} animalType={selectedAnimal}>
 					<div className="absolute -top-16 -right-4 h-40 w-auto rounded-2xl">
@@ -158,6 +159,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 								connect()
 									.then(() => {
 										setSessionStarted(true);
+                                        setPreviousSelectedAnimal(selectedAnimal);
 									})
 									.catch((err) => {
 										console.log(err);
@@ -180,7 +182,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 									<ChatMessage
 										key={index}
 										message={msg.message.content!}
-										author={msg.type == 'user_message' ? 'user' : 'cat'}
+										author={msg.type == 'user_message' ? 'user' : selectedAnimal}
 										time={msg.receivedAt}
 									/>
 								);
@@ -194,7 +196,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 										<ChatMessage
 											key={index}
 											message={msg.message.content!}
-											author={msg.type == 'user_message' ? 'user' : 'cat'}
+											author={msg.type == 'user_message' ? 'user' : previousSelectedAnimal}
 											time={msg.receivedAt}
 										/>
 									);

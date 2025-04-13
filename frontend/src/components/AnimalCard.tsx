@@ -29,7 +29,7 @@ const animalData: Record<AnimalType | 'default', AnimalDetails> = {
 		description: 'Buzzing with positivity and sweet encouragement.',
 	},
 	frog: {
-		title: 'Fralosopher',
+		title: 'Froglosopher',
 		imageSrc: '/frog.png',
 		altText: 'Happy Frog',
 		description: 'Leap into action with some ribbiting advice!',
@@ -48,7 +48,7 @@ const AnimalCard: React.FC<Props> = ({ animalType, setSelected, selected }) => {
     if (selected == animalType) {
         return (
             <div
-                className="bg-neutral-900 border border-white w-56 p-5 rounded-lg flex flex-col items-center gap-3 transition-all duration-200 hover:bg-neutral-800 cursor-pointer"
+                className="bg-neutral-900 border border-primary w-56 p-5 rounded-lg flex flex-col items-center gap-3 transition-all duration-200 hover:bg-neutral-800 cursor-pointer"
                 onClick={() => setSelected(animalType)}
             >
                 <div className="text-white text-lg font-medium">{data.title}</div>
