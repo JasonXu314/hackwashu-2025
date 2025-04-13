@@ -85,7 +85,11 @@ export default function Page({ accessToken }: PageProps) {
 				node.port.onmessage = (evt) => {
 					const buf: ArrayBuffer = evt.data.data;
 
-					ws.send(toB64(buf));
+					try {
+						ws.send(toB64(buf));
+					} catch {
+						node.port.onmessage = null;
+					}
 				};
 
 				let playing = false;
