@@ -99,17 +99,11 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
       >
         {/* Render children as an overlay */}
         {children && (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+          <div className="absolute top-0 left-0 flex items-center justify-center pointer-events-none">
             {children}
           </div>
         )}
       </div>
-      <button
-        onClick={talk}
-        className="bg-black w-fit text-white px-4 py-2 rounded-md mt-2 relative"
-      >
-        {isPlaying ? 'Stop' : 'Play'}
-      </button>
     </>
   );
 };
