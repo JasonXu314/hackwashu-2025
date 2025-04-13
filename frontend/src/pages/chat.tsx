@@ -7,7 +7,7 @@ import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import ChatCompoennt from '@/components/ChatComponent';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
@@ -34,16 +34,25 @@ export const getServerSideProps = async () => {
 type PageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 export default function Page({ accessToken }: PageProps) {
-    const router = useRouter();
-    const { selected } = router.query;
+	const router = useRouter();
+	const { selected } = router.query;
 
-    const [configId, setConfigId] = useState('60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161');
+	const [configId, setConfigId] = useState('60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161');
+
+	useEffect(() => {
+		const audio = new Audio('/background.mp3');
+		audio.loop = true; 
+        audio.volume = 0.15;
+		audio.play().catch((e) => {
+			console.warn('Autoplay might be blocked:', e);
+		});
+	}, []);
 
 	return (
 		<>
-			<audio src="background.mp3" loop autoPlay></audio>
+			{/* <audio src="background.mp3" loop autoPlay></audio> */}
 			<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId={configId}>
-				<ChatCompoennt selected={selected} setConfigId={setConfigId}/>
+				<ChatCompoennt selected={selected} setConfigId={setConfigId} />
 			</VoiceProvider>
 		</>
 	);
