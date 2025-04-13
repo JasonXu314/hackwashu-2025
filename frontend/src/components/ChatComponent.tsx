@@ -18,7 +18,7 @@ import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
 import { WandSparkles } from 'lucide-react';
 
-export default function ChatCompoennt({ selected } : {selected: string | string[] | undefined}) {
+export default function ChatCompoennt({ selected }: { selected: string | string[] | undefined }) {
 	const [muted, setMuted] = useState(false);
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
@@ -91,39 +91,56 @@ export default function ChatCompoennt({ selected } : {selected: string | string[
 		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-row">
 			{isOpen && <SummaryModal summary={summary} onClose={() => setIsOpen(false)} />}
 			<Logo mode="light" />
-			<div className="w-3/4 flex flex-col p-8 pt-24 gap-8 relative">
+			<div className="w-3/4 flex flex-col p-8 gap-4 relative">
+				<p className="text-5xl text-white text-center font-bold">
+					Talk to{' '}
+					<span className="text-primary">{selectedAnimal === 'cat' ? 'Meowtivator' : selectedAnimal === 'bee' ? 'Therabee' : 'Fralosopher'}</span>
+				</p>
 				<Scene playing={chatPlaying} animalType={selectedAnimal}>
-					<div className="absolute -top-8 -right-4 h-40 w-auto rounded-2xl">
+					<div className="absolute -top-16 -right-4 h-40 w-auto rounded-2xl">
 						<UserCamera />
 					</div>
 				</Scene>
-				<div className="flex justify-center items-center gap-6">
-					<div className="flex gap-4 items-center mr-auto">
+				<div className="flex justify-between items-center gap-6">
+					<div className="flex gap-4 items-center">
 						<img
 							src="/cat-pfp.svg"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'cat' ? 'outline-2' : 'outline-0'
 							}`}
-							onClick={() => setSelectedAnimal("cat")}
+							onClick={() => setSelectedAnimal('cat')}
 						/>
-						<img 
-							src="bee.jpg" 
+						<img
+							src="bee.jpg"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'bee' ? 'outline-2' : 'outline-0'
 							}`}
-							onClick={() => setSelectedAnimal("bee")}
+							onClick={() => setSelectedAnimal('bee')}
 						/>
-						<img 
-							src="frog.png" 
+						<img
+							src="frog.png"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'frog' ? 'outline-2' : 'outline-0'
 							}`}
-							onClick={() => setSelectedAnimal("frog")}
+							onClick={() => setSelectedAnimal('frog')}
 						/>
 					</div>
+					<button
+						className={`p-4 rounded-full ml-auto ${muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'}`}
+						onClick={() => {
+							if (muted) {
+								unmute();
+							} else {
+								mute();
+							}
+							setMuted(!muted);
+						}}
+					>
+						{muted ? <MicOff color="white" /> : <Mic />}
+					</button>
 					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
 						<button
-							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white flex gap-3 hover:bg-red-600"
+							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white font-semibold text-lg flex gap-3 hover:bg-red-600"
 							onClick={() => {
 								setPreviousMessages(messages);
 								summarize();
@@ -136,7 +153,7 @@ export default function ChatCompoennt({ selected } : {selected: string | string[
 						</button>
 					) : (
 						<button
-							className="items-center px-12 py-4 rounded-xl bg-primary text-white flex gap-3 hover:bg-primaryhover"
+							className="items-center px-12 py-4 rounded-xl bg-primary font-semibold text-lg text-white flex gap-3 hover:bg-primaryhover"
 							onClick={() => {
 								connect()
 									.then(() => {
@@ -151,19 +168,6 @@ export default function ChatCompoennt({ selected } : {selected: string | string[
 							Start Session
 						</button>
 					)}
-					<button
-						className={`p-4 rounded-full mr-auto ${muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'}`}
-						onClick={() => {
-							if (muted) {
-								unmute();
-							} else {
-								mute();
-							}
-							setMuted(!muted);
-						}}
-					>
-						{muted ? <MicOff color="white" /> : <Mic />}
-					</button>
 				</div>
 			</div>
 			<div className="bg-neutral-900 w-1/4 flex flex-col mc-container">
@@ -196,14 +200,14 @@ export default function ChatCompoennt({ selected } : {selected: string | string[
 									);
 								}
 							})}
-							{previousMessages.length > 0 && (
+							{previousMessages.length > 4 && (
 								<>
 									<p className="text-neutral-200 font-medium italic text-center">-- Session has been ended --</p>
 									<button
 										className="bg-gradient-to-br to-[#793BFF] from-[#CD5AFF] p-4 px-12 w-fit text-sm text-white font-medium text-center rounded-3xl flex gap-3 items-center"
 										onClick={() => setIsOpen(true)}
 									>
-                                        <WandSparkles size={16} />
+										<WandSparkles size={16} />
 										Generate Summary
 									</button>
 								</>

@@ -18,11 +18,11 @@ const Home = () => {
 					Talk to someone who <span className="text-primary">truly</span> listens
 				</p>
 				<p className="text-neutral-200 text-xl">
-				Mindcraft blends <span className='text-[#95B5E5]'>well-being</span> with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
+				Mindcraft blends <span className='text-[#CD5AFF]'>well-being</span> with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
 					as a unique, mob-themed character.
 				</p>
-				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-full font-bold text-xl hover:bg-primaryhover' href="choose">
-					Start chatting
+				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-xl font-semibold text-xl hover:bg-primaryhover' href="choose">
+					Start Chatting
 				</Link>
 			</div>
 		</div>
