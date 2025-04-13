@@ -1,13 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-	constructor(private readonly appService: AppService) {}
+	constructor(private readonly service: AppService) {}
 
-	@Get('/')
-	public getHello(): string {
-		return this.appService.getHello();
+	@Post('/begin')
+	public startChat(): string {
+		return this.service.beginChat();
+	}
+
+	@Post('/prompt')
+	public async promptChat(@Body('msg') msg: string, @Body('id') id: string): Promise<string> {
+		return this.service.prompt(id, msg);
 	}
 }
 

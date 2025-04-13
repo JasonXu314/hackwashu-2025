@@ -4,6 +4,7 @@ config();
 import { ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { WsAdapter } from '@nestjs/platform-ws';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { svelte } from './client/template-engine';
@@ -16,7 +17,9 @@ async function bootstrap() {
 	app.engine('svelte', svelte);
 	app.setViewEngine('svelte');
 	app.setBaseViewsDir('src/client/routes');
+	app.useWebSocketAdapter(new WsAdapter(app));
 
+	app.enableCors({ origin: true });
 	app.use(cookieParser())
 		.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }))
 		.useGlobalFilters(new ErrorPageFilter(app.get(HttpAdapterHost).httpAdapter), new RedirectFilter())
