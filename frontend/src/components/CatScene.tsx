@@ -99,7 +99,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
       >
         {/* Render children as an overlay */}
         {children && (
-          <div className="top-0 left-0 flex items-center justify-center pointer-events-none relative">
+          <div className="">
             {children}
           </div>
         )}
