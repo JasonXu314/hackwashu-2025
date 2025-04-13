@@ -15,6 +15,7 @@ import ReactMarkdown from 'react-markdown';
 import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import { ImPhoneHangUp } from 'react-icons/im';
+import SummaryModal from '@/components/SummaryModal';
 
 export default function ChatCompoennt() {
 	const [muted, setMuted] = useState(false);
@@ -26,6 +27,7 @@ export default function ChatCompoennt() {
 	const anchorRef = useRef<null | HTMLDivElement>(null);
 	const [summary, setSummary] = useState('');
 	const [selectedAnimal, setSelectedAnimal] = useState('cat');
+	const [isOpen, setIsOpen] = useState(false);
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
 
@@ -86,6 +88,7 @@ export default function ChatCompoennt() {
 
 	return (
 		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-row">
+			{isOpen && <SummaryModal summary={summary} onClose={() => setIsOpen(false)} />}
 			<Logo mode="light" />
 			<div className="w-3/4 flex flex-col p-8 pt-24 gap-8 relative">
 				<Scene playing={chatPlaying}>
