@@ -9,7 +9,7 @@ import { TextareaAutosize } from '@mui/material';
 import { fetchAccessToken } from 'hume';
 import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
 import { InferGetServerSidePropsType } from 'next';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
@@ -41,6 +41,7 @@ export default function Page({ accessToken }: PageProps) {
 	const [currentMessage, setCurrentMessage] = useState('');
 	const [chatMessages, setChatMessages] = useState<Message[]>([]);
 	const [chatPlaying, setChatPlaying] = useState(false);
+	const ref = useRef<WebSocket | null>(null);
 
 	const onKeyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -72,6 +73,8 @@ export default function Page({ accessToken }: PageProps) {
 				const ctx = new AudioContext({ sampleRate: 24_000 });
 				await ctx.audioWorklet.addModule(GeminiProcessor);
 				await new Promise((resolve) => ws.addEventListener('open', resolve, { once: true }));
+
+				ref.current = ws;
 
 				const src = ctx.createMediaStreamSource(stream);
 
@@ -149,7 +152,14 @@ export default function Page({ accessToken }: PageProps) {
 				</Scene>
 				<div className="flex flex-row justify-center items-center gap-6">
 					{sessionStarted ? (
-						<button className="px-16 py-5 rounded-md bg-red-500 text-white flex gap-3 hover:bg-red-600">
+						<button
+							className="px-16 py-5 rounded-md bg-red-500 text-white flex gap-3 hover:bg-red-600"
+							onClick={() => {
+								if (ref.current) {
+									ref.current.close();
+									ref.current = null;
+								}
+							}}>
 							<LogOut />
 							End Session
 						</button>
