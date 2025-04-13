@@ -1,5 +1,6 @@
 import Logo from '@/components/Logo';
 import Link from 'next/link';
+import { motion } from "motion/react"
 
 const Home = () => {
 	return (
@@ -13,7 +14,13 @@ const Home = () => {
 				className="absolute top-0 left-0 w-full h-full object-cover z-[1] opacity-30"
 			></video>
 			<Logo mode="light"/>
-			<div className='w-1/2 flex flex-col gap-8 items-center justify-center z-10'>
+			<motion.div className='w-1/2 flex flex-col gap-8 items-center justify-center z-10 opacity-0'
+				animate={{
+					y: [24, 0],
+					opacity: [0, 1],
+					transition: { duration: 0.25 },
+				}}
+			>
 				<p className="text-7xl text-white font-bold">
 					Talk to someone who <span className="text-primary">truly</span> listens
 				</p>
@@ -21,10 +28,10 @@ const Home = () => {
 				Mindcraft blends <span className='text-[#CD5AFF]'>well-being</span> with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
 					as a unique, mob-themed character.
 				</p>
-				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-xl font-semibold text-xl hover:bg-primaryhover' href="choose">
+				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-xl font-semibold text-xl hover:bg-primaryhover hover:scale-95 transition-all duration-100' href="choose">
 					Start Chatting
 				</Link>
-			</div>
+			</motion.div>
 		</div>
 	);
 };

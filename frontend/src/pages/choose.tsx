@@ -18,7 +18,7 @@ const Choose = () => {
 			</div>
 			<Link
 				href={{ pathname: '/chat', query: { selected } }}
-				className="items-center pl-12 pr-10 py-4 text-lg font-bold rounded-xl bg-primary text-white flex gap-3 hover:bg-primaryhover"
+				className="items-center pl-12 pr-10 py-4 text-lg font-bold rounded-xl bg-primary text-white flex gap-3 hover:bg-primaryhover hover:scale-95 transition-all duration-100"
 			>
 				NEXT
                 <FaChevronRight size={18} />

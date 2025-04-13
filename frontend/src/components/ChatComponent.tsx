@@ -154,24 +154,30 @@ export default function ChatCompoennt({
 						/>
 					</div>
 					<button
-						className={`p-4 rounded-full ml-auto ${
-							muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'
-						} disabled:opacity-50 disabled:cursor-not-allowed`}
-						onClick={() => {
+						className={`
+							p-4 rounded-full ml-auto
+							transition-all duration-100 ease-in-out
+							${muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'}
+							hover:scale-95
+							disabled:opacity-50
+							disabled:cursor-not-allowed
+							disabled:scale-100
+						  `}
+						  onClick={() => {
 							if (muted) {
-								unmute();
+							  unmute();
 							} else {
-								mute();
+							  mute();
 							}
 							setMuted(!muted);
-						}}
+						  }}
 						disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}
 					>
 						{muted ? <MicOff color="white" /> : <Mic />}
 					</button>
 					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
 						<button
-							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white font-semibold text-lg flex gap-3 hover:bg-red-600"
+							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white font-semibold text-lg flex gap-3 hover:bg-red-600 hover:scale-95 transition-all duration-100"
 							onClick={handleEndSession}
 						>
 							<ImPhoneHangUp size={20} />
@@ -179,7 +185,7 @@ export default function ChatCompoennt({
 						</button>
 					) : (
 						<button
-							className="items-center px-12 py-4 rounded-xl bg-primary font-semibold text-lg text-white flex gap-3 hover:bg-primaryhover disabled:opacity-70 disabled:cursor-wait"
+							className="items-center px-12 py-4 rounded-xl bg-primary font-semibold text-lg text-white flex gap-3 hover:bg-primaryhover disabled:opacity-70 disabled:cursor-wait hover:scale-95 transition-all duration-100"
 							onClick={handleStartSession}
 							disabled={isConnecting}
 						>
