@@ -5,7 +5,7 @@ const Home = () => {
 	return (
 		<div className="relative flex flex-col items-center justify-center h-screen w-full text-center overflow-hidden z-[2] bg-neutral-900">
 			<video
-				src="background.mp4"
+				src="background-cat.mp4"
 				loop
 				autoPlay
 				muted
