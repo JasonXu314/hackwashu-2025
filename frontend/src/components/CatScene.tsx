@@ -112,12 +112,22 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing }) => {
   }, [playing]);
 
   return (
+    <>
     <div
       ref={containerRef}
       className="w-full h-full bg-neutral-200 rounded-3xl relative"
     >
       {children && <div className="absolute top-0 left-0 w-full h-full">{children}</div>}
     </div>
+    <video
+				src="background.mp4"
+				loop
+				autoPlay
+				muted
+				playsInline
+				className="absolute top-0 left-0 w-full h-full z-[1] opacity-45"
+			></video>
+    </>
   );
 };
 
