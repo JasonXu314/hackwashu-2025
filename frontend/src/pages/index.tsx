@@ -10,7 +10,7 @@ const Home = () => {
 				autoPlay
 				muted
 				playsInline
-				className="absolute top-0 left-0 w-full h-full object-cover z-[1] opacity-45"
+				className="absolute top-0 left-0 w-full h-full object-cover z-[1] opacity-30"
 			></video>
 			<Logo />
 			<div className='w-1/2 flex flex-col gap-8 items-center justify-center z-10'>
@@ -18,7 +18,7 @@ const Home = () => {
 					Talk to someone who <span className="text-primary">truly</span> listens
 				</p>
 				<p className="text-neutral-200 text-xl">
-				Mindcraft blends well-being with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
+				Mindcraft blends <span className='text-[#95B5E5]'>well-being</span> with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
 					as a unique, mob-themed character.
 				</p>
 				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-full font-bold text-xl hover:bg-primaryhover' href="chat">

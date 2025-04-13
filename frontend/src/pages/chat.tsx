@@ -14,22 +14,22 @@ import { useCallback, useRef, useState } from 'react';
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
 		apiKey: String(process.env.HUME_API_KEY),
-		secretKey: String(process.env.HUME_SECRET_KEY)
+		secretKey: String(process.env.HUME_SECRET_KEY),
 	});
 
 	if (!accessToken) {
 		return {
 			redirect: {
 				destination: '/error',
-				permanent: false
-			}
+				permanent: false,
+			},
 		};
 	}
 
 	return {
 		props: {
-			accessToken
-		}
+			accessToken,
+		},
 	};
 };
 
@@ -85,11 +85,13 @@ export default function Page({ accessToken }: PageProps) {
 				node.port.onmessage = (evt) => {
 					const buf: ArrayBuffer = evt.data.data;
 
-					try {
-						ws.send(toB64(buf));
-					} catch {
-						node.port.onmessage = null;
-						ctx.close();
+					if (!muted) {
+						try {
+							ws.send(toB64(buf));
+						} catch {
+							node.port.onmessage = null;
+							ctx.close();
+						}
 					}
 				};
 
@@ -160,11 +162,13 @@ export default function Page({ accessToken }: PageProps) {
 						<button
 							className="px-16 py-5 rounded-md bg-red-500 text-white flex gap-3 hover:bg-red-600"
 							onClick={() => {
+								setSessionStarted(false);
 								if (ref.current) {
 									ref.current.close();
 									ref.current = null;
 								}
-							}}>
+							}}
+						>
 							<LogOut />
 							End Session
 						</button>
@@ -248,4 +252,3 @@ export default function Page({ accessToken }: PageProps) {
 		</div>
 	);
 }
-
