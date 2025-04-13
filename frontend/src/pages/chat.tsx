@@ -40,8 +40,11 @@ export default function Page({ accessToken }: PageProps) {
     const [configId, setConfigId] = useState('60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161');
 
 	return (
-		<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId={configId}>
-			<ChatCompoennt selected={selected} setConfigId={setConfigId}/>
-		</VoiceProvider>
+		<>
+			<audio src="background.mp3" loop autoPlay></audio>
+			<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId={configId}>
+				<ChatCompoennt selected={selected} setConfigId={setConfigId}/>
+			</VoiceProvider>
+		</>
 	);
 }
