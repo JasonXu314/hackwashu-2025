@@ -42,23 +42,24 @@ export default function Page({ accessToken }: PageProps) {
 		// </VoiceProvider>
 		<div className="bg-gradient-to-br from-white to-[#B4F7F8] h-screen flex flex-row">
 			<Logo />
-			<div className="basis-2/3 flex flex-col p-16">
+			<div className="w-3/4 flex flex-col p-16 gap-8">
 				<Scene>
 					<div className="absolute -top-8 -right-8 h-40 w-auto rounded-2xl">
 						<UserCamera />
 					</div>
 				</Scene>
-				<div className="flex flex-row justify-center gap-16">
-					<button className="p-8 bg-red-500 rounded-md">End Session</button>
+				<div className="flex flex-row justify-center items-center gap-16">
+					<button className="px-16 py-5 rounded-md bg-red-500 text-white">End Session</button>
 					<button className="p-8 rounded-full bg-neutral-300">End</button>
 				</div>
 			</div>
-			<div className="bg-white basis-1/3 flex flex-col gap-6">
+			<div className="bg-white w-1/4 flex flex-col gap-6">
 				<p className="text-center border-b-2 p-6 font-bold text-xl">Session Chat</p>
-				<div className="flex flex-col px-6 overflow-y-scroll gap-3">
+				<div className="flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full">
 					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" who="User" />
 					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" who="User" />
 					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" who="User" />
+					<ChatMessage message="blah blah dsadasdas asdassdflasdjldfasjfadjkafdjkfdaskjldfskljfklj" who="Cat" />
 				</div>
 				<div className="w-full border-t-2 mt-auto flex items-center">
 					<input className="w-full h-full p-6 outline-none" placeholder="Enter message..."></input>
