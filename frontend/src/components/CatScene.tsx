@@ -1,10 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, ReactNode } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+interface ThreeSceneProps {
+  children?: ReactNode;
+}
+
 const loader = new GLTFLoader();
 
-const ThreeScene: React.FC = () => {
+const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -99,9 +103,19 @@ const ThreeScene: React.FC = () => {
     <>
       <div
         ref={containerRef}
-        className="w-60 h-60 bg-neutral-200 rounded-3xl"
-      />
-      <button onClick={talk} className="bg-black w-fit text-white px-4 py-2 rounded-md mt-2">
+        className="w-full h-full bg-neutral-200 rounded-3xl relative"
+      >
+        {/* Render children as an overlay */}
+        {children && (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+            {children}
+          </div>
+        )}
+      </div>
+      <button
+        onClick={talk}
+        className="bg-black w-fit text-white px-4 py-2 rounded-md mt-2 relative"
+      >
         {isPlaying ? 'Stop' : 'Play'}
       </button>
     </>
