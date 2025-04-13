@@ -1,17 +1,7 @@
 // ./pages/index.tsx
-import Scene from '@/components/CatScene';
-import ChatMessage, { Message } from '@/components/ChatMessage';
-import Logo from '@/components/Logo';
-import UserCamera from '@/components/UserCamera';
-import api from '@/lib/axiosConfig';
-import { GeminiProcessor } from '@/lib/GeminiProcessor';
-import { toB64, toF32Audio } from '@/lib/utils';
-import { TextareaAutosize } from '@mui/material';
+
 import { fetchAccessToken } from 'hume';
-import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
 import { InferGetServerSidePropsType } from 'next';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import ChatCompoennt from '@/components/ChatComponent';

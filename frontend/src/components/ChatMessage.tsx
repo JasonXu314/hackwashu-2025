@@ -1,12 +1,12 @@
 import ReactMarkdown from 'react-markdown';
 
 export interface Message {
-	messages: string[];
+	message: string;
 	author: 'cat' | 'user';
 	time: Date;
 }
 
-const ChatMessage = ({ messages, author, time }: Message) => {
+const ChatMessage = ({ message, author, time }: Message) => {
 	return (
 		<div className="flex gap-3 w-full px-2 sm:px-4">
 			{/* Avatar */}
@@ -19,23 +19,21 @@ const ChatMessage = ({ messages, author, time }: Message) => {
 					<p className="text-neutral-400 font-medium text-sm">{time.toLocaleTimeString()}</p>
 				</div>
 				<div className="flex flex-col gap-1">
-					{messages.map((message, index) => (
-						<div className=" bg-neutral-800 rounded-lg px-4 py-2" key={index}>
-							<ReactMarkdown
-								components={{
-									p: ({ children }) => <p className="text-sm whitespace-pre-wrap break-words text-white">{children}</p>,
-									strong: ({ children }) => (
-										<strong className="text-sm whitespace-pre-wrap break-wordsfont-semibold text-primary">{children}</strong>
-									),
-									em: ({ children }) => <em className="text-sm whitespace-pre-wrap break-words text-inherit italic">{children}</em>,
-									ul: ({ children }) => <ul className="list-disc list-inside pl-4 space-y-2 text-sm break-words text-white">{children}</ul>,
-									li: ({ children }) => <li className="text-sm break-words text-white">{children}</li>,
-								}}
-							>
-								{message}
-							</ReactMarkdown>
-						</div>
-					))}
+					<div className=" bg-neutral-800 rounded-lg px-4 py-2">
+						<ReactMarkdown
+							components={{
+								p: ({ children }) => <p className="text-sm whitespace-pre-wrap break-words text-white">{children}</p>,
+								strong: ({ children }) => (
+									<strong className="text-sm whitespace-pre-wrap break-wordsfont-semibold text-primary">{children}</strong>
+								),
+								em: ({ children }) => <em className="text-sm whitespace-pre-wrap break-words text-inherit italic">{children}</em>,
+								ul: ({ children }) => <ul className="list-disc list-inside pl-4 space-y-2 text-sm break-words text-white">{children}</ul>,
+								li: ({ children }) => <li className="text-sm break-words text-white">{children}</li>,
+							}}
+						>
+							{message}
+						</ReactMarkdown>
+					</div>
 				</div>
 			</div>
 		</div>
