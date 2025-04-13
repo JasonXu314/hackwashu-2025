@@ -24,7 +24,7 @@ export default function ChatCompoennt() {
 	const [chatPlaying, setChatPlaying] = useState(false);
 	const [id, setId] = useState('');
 	const anchorRef = useRef<null | HTMLDivElement>(null);
-	const [isOpen, setIsOpen] = useState(true);
+	const [isOpen, setIsOpen] = useState(false);
 	const [summaryContent, setSummaryContent] = useState("");
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
