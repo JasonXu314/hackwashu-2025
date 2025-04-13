@@ -8,7 +8,7 @@ import { GeminiProcessor } from '@/lib/GeminiProcessor';
 import { toB64, toF32Audio } from '@/lib/utils';
 import { TextareaAutosize } from '@mui/material';
 import { fetchAccessToken } from 'hume';
-import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
+import { LogOut, Mic, MicOff, PhoneCall, Loader2 } from 'lucide-react'; // Import Loader2
 import { InferGetServerSidePropsType } from 'next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -18,7 +18,7 @@ import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
 import { WandSparkles } from 'lucide-react';
 
-export default function ChatCompoennt({ selected }: { selected: string | string[] | undefined }) {
+export default function ChatComponent({ selected }: { selected: string | string[] | undefined }) {
 	const [muted, setMuted] = useState(false);
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
@@ -88,6 +88,26 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 			});
 	};
 
+	const handleStartSession = () => {
+		connect()
+			.then(() => {
+				setSessionStarted(true);
+                setPreviousSelectedAnimal(selectedAnimal);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	const handleEndSession = () => {
+		setPreviousMessages(messages);
+		summarize();
+		setSessionStarted(false);
+		disconnect();
+	};
+
+	const isConnecting = readyState === VoiceReadyState.CONNECTING;
+
 	return (
 		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-row">
 			{isOpen && <SummaryModal summary={summary} onClose={() => setIsOpen(false)} />}
@@ -106,28 +126,28 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 					<div className="flex gap-4 items-center">
 						<img
 							src="/cat-pfp.svg"
-							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
-								selectedAnimal === 'cat' ? 'outline-2' : 'outline-0'
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 opacity-20 ${
+								selectedAnimal === 'cat' ? 'outline-2 opacity-100' : 'outline-0 opacity-20'
 							}`}
-							onClick={() => setSelectedAnimal('cat')}
+							onClick={() => !isConnecting && !sessionStarted && setSelectedAnimal('cat')}
 						/>
 						<img
 							src="bee.jpg"
-							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
-								selectedAnimal === 'bee' ? 'outline-2' : 'outline-0'
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 opacity-20 ${
+								selectedAnimal === 'bee' ? 'outline-2 opacity-100' : 'outline-0 opacity-20'
 							}`}
-							onClick={() => setSelectedAnimal('bee')}
+							onClick={() => !isConnecting && !sessionStarted && setSelectedAnimal('bee')}
 						/>
 						<img
 							src="frog.png"
-							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
-								selectedAnimal === 'frog' ? 'outline-2' : 'outline-0'
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 opacity-20 ${
+								selectedAnimal === 'frog' ? 'outline-2 opacity-100' : 'outline-0 opacity-20'
 							}`}
-							onClick={() => setSelectedAnimal('frog')}
+							onClick={() => !isConnecting && !sessionStarted && setSelectedAnimal('frog')}
 						/>
 					</div>
 					<button
-						className={`p-4 rounded-full ml-auto ${muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'}`}
+						className={`p-4 rounded-full ml-auto ${muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'} disabled:opacity-50 disabled:cursor-not-allowed`}
 						onClick={() => {
 							if (muted) {
 								unmute();
@@ -136,38 +156,35 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 							}
 							setMuted(!muted);
 						}}
+                        disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}
 					>
 						{muted ? <MicOff color="white" /> : <Mic />}
 					</button>
 					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
 						<button
 							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white font-semibold text-lg flex gap-3 hover:bg-red-600"
-							onClick={() => {
-								setPreviousMessages(messages);
-								summarize();
-								setSessionStarted(false);
-								disconnect();
-							}}
+							onClick={handleEndSession}
 						>
 							<ImPhoneHangUp size={20} />
 							End Session
 						</button>
 					) : (
 						<button
-							className="items-center px-12 py-4 rounded-xl bg-primary font-semibold text-lg text-white flex gap-3 hover:bg-primaryhover"
-							onClick={() => {
-								connect()
-									.then(() => {
-										setSessionStarted(true);
-                                        setPreviousSelectedAnimal(selectedAnimal);
-									})
-									.catch((err) => {
-										console.log(err);
-									});
-							}}
+							className="items-center px-12 py-4 rounded-xl bg-primary font-semibold text-lg text-white flex gap-3 hover:bg-primaryhover disabled:opacity-70 disabled:cursor-wait"
+							onClick={handleStartSession}
+                            disabled={isConnecting}
 						>
-							<PhoneCall size={20} />
-							Start Session
+							{isConnecting ? (
+                                <>
+                                    <Loader2 size={20} className="animate-spin" />
+                                    Connecting...
+                                </>
+                            ) : (
+                                <>
+                                    <PhoneCall size={20} />
+                                    Start Session
+                                </>
+                            )}
 						</button>
 					)}
 				</div>
@@ -202,7 +219,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 									);
 								}
 							})}
-							{previousMessages.length > 4 && (
+							{previousMessages.length > 4 && !isConnecting && ( // Only show if not connecting
 								<>
 									<p className="text-neutral-200 font-medium italic text-center">-- Session has been ended --</p>
 									<button
