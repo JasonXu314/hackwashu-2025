@@ -91,22 +91,34 @@ export default function ChatCompoennt() {
 			{isOpen && <SummaryModal summary={summary} onClose={() => setIsOpen(false)} />}
 			<Logo mode="light" />
 			<div className="w-3/4 flex flex-col p-8 pt-24 gap-8 relative">
-				<Scene playing={chatPlaying}>
+				<Scene playing={chatPlaying} animalType={selectedAnimal}>
 					<div className="absolute -top-8 -right-4 h-40 w-auto rounded-2xl">
 						<UserCamera />
 					</div>
 				</Scene>
 				<div className="flex justify-center items-center gap-6">
-					<div className="flex gap-2 items-center mr-auto">
+					<div className="flex gap-4 items-center mr-auto">
 						<img
 							src="/cat-pfp.svg"
-							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 ${
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'cat' ? 'outline-2' : 'outline-0'
 							}`}
+							onClick={() => setSelectedAnimal("cat")}
 						/>
-
-						<img src="cat-pfp.svg" className="h-12 w-12"></img>
-						<img src="cat-pfp.svg" className="h-12 w-12"></img>
+						<img 
+							src="bee.jpg" 
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
+								selectedAnimal === 'bee' ? 'outline-2' : 'outline-0'
+							}`}
+							onClick={() => setSelectedAnimal("bee")}
+						/>
+						<img 
+							src="frog.png" 
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
+								selectedAnimal === 'frog' ? 'outline-2' : 'outline-0'
+							}`}
+							onClick={() => setSelectedAnimal("frog")}
+						/>
 					</div>
 					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
 						<button
@@ -152,7 +164,7 @@ export default function ChatCompoennt() {
 					</button>
 				</div>
 			</div>
-			<div className="bg-neutral-900 w-1/4 flex flex-col">
+			<div className="bg-neutral-900 w-1/4 flex flex-col mc-container">
 				<p className="text-center border-b-2 p-4 font-bold text-lg text-white border-neutral-600">Session Chat</p>
 				<div className="py-6 flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full">
 					{messages.map((msg, index) => {

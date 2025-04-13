@@ -19,6 +19,13 @@ body {
 	.text-balance {
 		text-wrap: balance;
 	}
+	.mc-container {
+		box-shadow:
+		  inset 0 4px 0 0 var(--mc-core-rich-black),
+		  inset 0 -4px 0 0 #3a3735,
+		  inset 4px 0 0 0 #3a3735,
+		  inset -4px 0 0 0 var(--mc-core-rich-black);
+	  }
 }
 
 @theme {
