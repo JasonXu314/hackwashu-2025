@@ -1,4 +1,5 @@
 import { Cat } from 'lucide-react';
+import Link from 'next/link';
 
 const Logo = () => {
 	return (
