@@ -1,39 +1,11 @@
-// ./pages/index.tsx
-import Controls from "@/components/Controls";
-import Messages from "@/components/Messages";
-import { fetchAccessToken } from "hume";
-import { VoiceProvider } from "@humeai/voice-react";
-import { InferGetServerSidePropsType } from "next";
+import Logo from '@/components/Logo';
 
-export const getServerSideProps = async () => {
-  const accessToken = await fetchAccessToken({
-    apiKey: String(process.env.HUME_API_KEY),
-    secretKey: String(process.env.HUME_SECRET_KEY),
-  });
-
-  if (!accessToken) {
-    return {
-      redirect: {
-        destination: "/error",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      accessToken,
-    },
-  };
+const Home = () => {
+	return (
+		<div>
+			<Logo />
+		</div>
+	);
 };
 
-type PageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
-
-export default function Page({ accessToken }: PageProps) {
-  return (
-    <VoiceProvider auth={{ type: "accessToken", value: accessToken }}>
-      <Messages />
-      <Controls />
-    </VoiceProvider>
-  );
-}
+export default Home;
