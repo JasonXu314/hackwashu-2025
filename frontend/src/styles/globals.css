@@ -12,6 +12,7 @@
 body {
 	color: black;
 	background: white;
+    font-family: 'Inter';
 }
 
 @layer utilities {

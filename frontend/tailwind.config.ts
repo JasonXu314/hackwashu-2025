@@ -12,6 +12,11 @@ const config: Config = {
 				inter: ['Inter', 'sans-serif'],
 				fredoka: ['Fredoka', 'sans-serif'],
 			},
+            colors: {
+                primary: '#00C5CA',
+                primaryhover: '#00AEB2',
+                darkgray: '#1A1A1A',
+            }
 		},
 	},
 	plugins: [],
