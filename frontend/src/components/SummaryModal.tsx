@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 
 const SummaryModal = ({ summary, onClose }: { summary: string; onClose: () => void }) => {
 	return (
@@ -10,7 +10,7 @@ const SummaryModal = ({ summary, onClose }: { summary: string; onClose: () => vo
 				>
 					<X size={20} />
 				</button>
-				<h2 className="text-lg font-semibold mb-2">Session Summary</h2>
+				<h2 className="text-lg font-semibold mb-2 flex gap-3 items-center"><Sparkles color="#793BFF"/>Session Summary</h2>
 				<p>{summary}</p>
 			</div>
 		</div>

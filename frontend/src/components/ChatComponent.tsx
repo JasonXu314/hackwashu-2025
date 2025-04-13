@@ -16,18 +16,19 @@ import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
+import { WandSparkles } from 'lucide-react';
 
 export default function ChatCompoennt() {
 	const [muted, setMuted] = useState(false);
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
-	const [chatMessages, setChatMessages] = useState<Message[]>([]);
 	const [chatPlaying, setChatPlaying] = useState(false);
 	const [id, setId] = useState('');
 	const anchorRef = useRef<null | HTMLDivElement>(null);
 	const [summary, setSummary] = useState('');
 	const [selectedAnimal, setSelectedAnimal] = useState('cat');
 	const [isOpen, setIsOpen] = useState(false);
+	const [previousMessages, setPreviousMessages] = useState<any[]>([]);
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
 
@@ -124,9 +125,10 @@ export default function ChatCompoennt() {
 						<button
 							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white flex gap-3 hover:bg-red-600"
 							onClick={() => {
+								setPreviousMessages(messages);
+								summarize();
 								setSessionStarted(false);
 								disconnect();
-								summarize();
 							}}
 						>
 							<ImPhoneHangUp size={20} />
@@ -166,19 +168,48 @@ export default function ChatCompoennt() {
 			</div>
 			<div className="bg-neutral-900 w-1/4 flex flex-col mc-container">
 				<p className="text-center border-b-2 p-4 font-bold text-lg text-white border-neutral-600">Session Chat</p>
-				<div className="py-6 flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full">
-					{messages.map((msg, index) => {
-						if (msg.type === 'user_message' || msg.type === 'assistant_message') {
-							return (
-								<ChatMessage
-									key={index}
-									message={msg.message.content!}
-									author={msg.type == 'user_message' ? 'user' : 'cat'}
-									time={msg.receivedAt}
-								/>
-							);
-						}
-					})}
+				<div className="py-6 flex flex-col px-2 overflow-y-scroll overflow-x-hidden gap-3 w-full items-center">
+					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
+						messages.map((msg, index) => {
+							if (msg.type === 'user_message' || msg.type === 'assistant_message') {
+								return (
+									<ChatMessage
+										key={index}
+										message={msg.message.content!}
+										author={msg.type == 'user_message' ? 'user' : 'cat'}
+										time={msg.receivedAt}
+									/>
+								);
+							}
+						})
+					) : (
+						<>
+							{previousMessages.map((msg, index) => {
+								if (msg.type === 'user_message' || msg.type === 'assistant_message') {
+									return (
+										<ChatMessage
+											key={index}
+											message={msg.message.content!}
+											author={msg.type == 'user_message' ? 'user' : 'cat'}
+											time={msg.receivedAt}
+										/>
+									);
+								}
+							})}
+							{previousMessages.length > 0 && (
+								<>
+									<p className="text-neutral-200 font-medium italic text-center">-- Session has been ended --</p>
+									<button
+										className="bg-gradient-to-br to-[#793BFF] from-[#CD5AFF] p-4 px-12 w-fit text-sm text-white font-medium text-center rounded-3xl flex gap-3 items-center"
+										onClick={() => setIsOpen(true)}
+									>
+                                        <WandSparkles size={16} />
+										Generate Summary
+									</button>
+								</>
+							)}
+						</>
+					)}
 					<div ref={anchorRef} />
 				</div>
 				<div className="w-full border-t-2 mt-auto flex items-center border-neutral-600">
