@@ -27,7 +27,7 @@ export default function ChatCompoennt() {
 	const [isOpen, setIsOpen] = useState(true);
 	const [summaryContent, setSummaryContent] = useState("");
 
-	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput } = useVoice();
+	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
 
 	useEffect(() => {
 		api.post('/begin')
@@ -56,6 +56,7 @@ export default function ChatCompoennt() {
 			e.preventDefault();
 			// sendMessage();
 			sendUserInput(currentMessage);
+            setCurrentMessage('')
 		}
 	};
 
@@ -157,15 +158,19 @@ export default function ChatCompoennt() {
 							Start Session
 						</button>
 					)}
-					<button className="p-5 rounded-full bg-neutral-300 hover:bg-neutral-400" onClick={() => setMuted(!muted)}>
-						{muted ? <MicOff /> : <Mic />}
-					</button>
-					{/* <button
-						className="p-5 rounded-full bg-white/30 hover:bg-white/40 backdrop-blur-md border border-white/20 shadow-sm transition duration-200"
-						onClick={() => setMuted(!muted)}
+					<button
+						className="p-5 rounded-full bg-neutral-100 hover:bg-neutral-300"
+						onClick={() => {
+							if (muted) {
+								unmute();
+							} else {
+								mute();
+							}
+							setMuted(!muted);
+						}}
 					>
 						{muted ? <MicOff /> : <Mic />}
-					</button> */}
+					</button>
 				</div>
 			</div>
 			<div className="bg-neutral-900 w-1/4 flex flex-col">
@@ -195,6 +200,7 @@ export default function ChatCompoennt() {
 						onChange={(e) => setCurrentMessage(e.target.value)}
 						maxLength={2000}
 						value={currentMessage}
+                        disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}
 					/>
 				</div>
 			</div>
