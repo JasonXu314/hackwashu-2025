@@ -9,10 +9,10 @@ const Choose = () => {
 	return (
 		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-col justify-center items-center gap-8">
 			<Logo mode="light" />
-			<div className="flex flex-row justify-center items-center gap-5">
-				<AnimalCard animalType="cat"></AnimalCard>
-				<AnimalCard animalType="bee"></AnimalCard>
-				<AnimalCard animalType="frog"></AnimalCard>
+			<div className="flex justify-center items-center gap-5">
+				<AnimalCard animalType="cat" setSelected={setSelected} selected={selected}></AnimalCard>
+				<AnimalCard animalType="bee" setSelected={setSelected} selected={selected}></AnimalCard>
+				<AnimalCard animalType="frog" setSelected={setSelected} selected={selected}></AnimalCard>
 			</div>
 			<Link
 				href={{ pathname: '/chat', query: { selected } }}
