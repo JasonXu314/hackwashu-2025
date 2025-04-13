@@ -16,6 +16,7 @@ import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
+import { WandSparkles } from 'lucide-react';
 
 export default function ChatCompoennt() {
 	const [muted, setMuted] = useState(false);
@@ -183,10 +184,18 @@ export default function ChatCompoennt() {
 									);
 								}
 							})}
-							<p className="text-neutral-200 font-medium italic text-center">-- Session has been ended --</p>
-							<button className="bg-gradient-to-br to-[#793BFF] from-[#CD5AFF] p-4 px-16 w-fit text-sm text-white font-medium text-center rounded-3xl" onClick={() => setIsOpen(true)}>
-								View Summary
-							</button>
+							{previousMessages.length > 0 && (
+								<>
+									<p className="text-neutral-200 font-medium italic text-center">-- Session has been ended --</p>
+									<button
+										className="bg-gradient-to-br to-[#793BFF] from-[#CD5AFF] p-4 px-12 w-fit text-sm text-white font-medium text-center rounded-3xl flex gap-3 items-center"
+										onClick={() => setIsOpen(true)}
+									>
+                                        <WandSparkles size={16} />
+										Generate Summary
+									</button>
+								</>
+							)}
 						</>
 					)}
 					<div ref={anchorRef} />
