@@ -21,6 +21,7 @@ const Home = () => {
 					opacity: [0, 1],
 					transition: { duration: 0.25 },
 				}}
+				
 			>
 				<p className="text-7xl text-white font-bold">
 					Talk to someone who <span className="text-primary">truly</span> listens

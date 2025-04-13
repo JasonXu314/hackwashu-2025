@@ -46,7 +46,6 @@ export default function Page({ accessToken }: PageProps) {
 
 	return (
 		<>
-			{/* <audio src="background.mp3" loop autoPlay></audio> */}
 			<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId={configId}>
 				<ChatCompoennt selected={selected} setConfigId={setConfigId} />
 			</VoiceProvider>
