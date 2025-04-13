@@ -14,6 +14,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
+import { ImPhoneHangUp } from 'react-icons/im';
 
 export default function ChatCompoennt() {
 	const [muted, setMuted] = useState(false);
@@ -23,6 +24,8 @@ export default function ChatCompoennt() {
 	const [chatPlaying, setChatPlaying] = useState(false);
 	const [id, setId] = useState('');
 	const anchorRef = useRef<null | HTMLDivElement>(null);
+	const [summary, setSummary] = useState('');
+	const [selectedAnimal, setSelectedAnimal] = useState('cat');
 
 	const { connect, disconnect, readyState, isPlaying, messages, sendUserInput, mute, unmute } = useVoice();
 
@@ -51,9 +54,8 @@ export default function ChatCompoennt() {
 	const onKeyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
-			// sendMessage();
 			sendUserInput(currentMessage);
-            setCurrentMessage('')
+			setCurrentMessage('');
 		}
 	};
 
@@ -61,60 +63,26 @@ export default function ChatCompoennt() {
 		anchorRef.current?.scrollIntoView({ behavior: 'auto' });
 	};
 
-	// const sendMessage = () => {
-	// 	if (currentMessage.trim() === '') return;
+	const summarize = () => {
+		const filteredMessages = messages
+			.filter((msg) => msg.type === 'user_message' || msg.type === 'assistant_message')
+			.map((msg) => `${msg.type}: ${msg.message.content}`) // Optional: add author label
+			.join('\n');
 
-	// 	const userMessage = currentMessage.trim();
-	// 	setCurrentMessage('');
-
-	// 	let updatedMessages = [...chatMessages];
-
-	// 	if (updatedMessages.length > 0 && updatedMessages[updatedMessages.length - 1].author === 'user') {
-	// 		updatedMessages = updatedMessages.map((msg, index) =>
-	// 			index === updatedMessages.length - 1
-	// 				? {
-	// 						...msg,
-	// 						messages: [...msg.messages, userMessage],
-	// 				  }
-	// 				: msg
-	// 		);
-	// 	} else {
-	// 		updatedMessages.push({
-	// 			author: 'user',
-	// 			messages: [userMessage],
-	// 			time: new Date(),
-	// 		});
-	// 	}
-
-	// 	setChatMessages(updatedMessages);
-
-	// 	api.post('/prompt', {
-	// 		id: id,
-	// 		msg: userMessage,
-	// 	})
-	// 		.then((res) => {
-	// 			const aiResponse = res.data;
-	// 			setChatMessages((prev) => {
-	// 				const newMessages = [...prev];
-	// 				if (newMessages.length > 0 && newMessages[newMessages.length - 1].author === 'cat') {
-	// 					newMessages[newMessages.length - 1] = {
-	// 						...newMessages[newMessages.length - 1],
-	// 						messages: [...newMessages[newMessages.length - 1].messages, aiResponse],
-	// 					};
-	// 				} else {
-	// 					newMessages.push({
-	// 						author: 'cat',
-	// 						messages: [aiResponse],
-	// 						time: new Date(),
-	// 					});
-	// 				}
-	// 				return newMessages;
-	// 			});
-	// 		})
-	// 		.catch((err) => {
-	// 			console.error(err);
-	// 		});
-	// };
+		api.post('/prompt', {
+			id: id,
+			msg:
+				"I'm providing you conversation data between me (user) and someone else (assistant). Could you summarize our conversation in under 100 words. " +
+				filteredMessages,
+		})
+			.then((res) => {
+				setSummary(res.data);
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
 
 	return (
 		<div className="bg-gradient-to-br from-darkgray to-[#2A2A2A] h-screen flex flex-row">
@@ -125,21 +93,33 @@ export default function ChatCompoennt() {
 						<UserCamera />
 					</div>
 				</Scene>
-				<div className="flex flex-row justify-center items-center gap-6">
+				<div className="flex justify-center items-center gap-6">
+					<div className="flex gap-2 items-center mr-auto">
+						<img
+							src="/cat-pfp.svg"
+							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 ${
+								selectedAnimal === 'cat' ? 'outline-2' : 'outline-0'
+							}`}
+						/>
+
+						<img src="cat-pfp.svg" className="h-12 w-12"></img>
+						<img src="cat-pfp.svg" className="h-12 w-12"></img>
+					</div>
 					{sessionStarted && readyState === VoiceReadyState.OPEN ? (
 						<button
-							className="px-16 py-5 rounded-md bg-red-500 text-white flex gap-3 hover:bg-red-600"
+							className="items-center px-12 py-4 rounded-xl bg-red-500 text-white flex gap-3 hover:bg-red-600"
 							onClick={() => {
 								setSessionStarted(false);
 								disconnect();
+								summarize();
 							}}
 						>
-							<LogOut />
+							<ImPhoneHangUp size={20} />
 							End Session
 						</button>
 					) : (
 						<button
-							className="px-16 py-5 rounded-md bg-primary text-white flex gap-3 hover:bg-primaryhover"
+							className="items-center px-12 py-4 rounded-xl bg-primary text-white flex gap-3 hover:bg-primaryhover"
 							onClick={() => {
 								connect()
 									.then(() => {
@@ -150,12 +130,12 @@ export default function ChatCompoennt() {
 									});
 							}}
 						>
-							<PhoneCall />
+							<PhoneCall size={20} />
 							Start Session
 						</button>
 					)}
 					<button
-						className="p-5 rounded-full bg-neutral-100 hover:bg-neutral-300"
+						className={`p-4 rounded-full mr-auto ${muted ? 'bg-red-500 hover:bg-red-600' : 'bg-neutral-100 hover:bg-neutral-300'}`}
 						onClick={() => {
 							if (muted) {
 								unmute();
@@ -165,7 +145,7 @@ export default function ChatCompoennt() {
 							setMuted(!muted);
 						}}
 					>
-						{muted ? <MicOff /> : <Mic />}
+						{muted ? <MicOff color="white" /> : <Mic />}
 					</button>
 				</div>
 			</div>
@@ -196,7 +176,7 @@ export default function ChatCompoennt() {
 						onChange={(e) => setCurrentMessage(e.target.value)}
 						maxLength={2000}
 						value={currentMessage}
-                        disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}
+						disabled={!sessionStarted || readyState !== VoiceReadyState.OPEN}
 					/>
 				</div>
 			</div>
