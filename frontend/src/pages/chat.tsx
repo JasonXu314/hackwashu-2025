@@ -7,6 +7,7 @@ import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import ChatCompoennt from '@/components/ChatComponent';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
@@ -36,9 +37,11 @@ export default function Page({ accessToken }: PageProps) {
     const router = useRouter();
     const { selected } = router.query;
 
+    const [configId, setConfigId] = useState('60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161');
+
 	return (
-		<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId="60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161">
-			<ChatCompoennt selected={selected}/>
+		<VoiceProvider auth={{ type: 'accessToken', value: accessToken }} configId={configId}>
+			<ChatCompoennt selected={selected} setConfigId={setConfigId}/>
 		</VoiceProvider>
 	);
 }

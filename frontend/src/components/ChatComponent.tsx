@@ -10,15 +10,28 @@ import { TextareaAutosize } from '@mui/material';
 import { fetchAccessToken } from 'hume';
 import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
 import { InferGetServerSidePropsType } from 'next';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { VoiceProvider } from '@humeai/voice-react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
 import { WandSparkles } from 'lucide-react';
+import { setConfig } from 'next/config';
 
-export default function ChatCompoennt({ selected }: { selected: string | string[] | undefined }) {
+const configs = {
+    'cat': '1186fe63-e191-4e60-8cf8-2a1c59097589',
+    'bee': '60d82fe3-78f5-4e6c-ae4a-7c7e50fe3161',
+    'frog': 'a85a190a-05e7-4588-84f9-193d906fddbe',
+}
+
+export default function ChatCompoennt({
+	selected,
+	setConfigId,
+}: {
+	selected: string | string[] | undefined;
+	setConfigId: React.Dispatch<React.SetStateAction<string>>;
+}) {
 	const [muted, setMuted] = useState(false);
 	const [sessionStarted, setSessionStarted] = useState(false);
 	const [currentMessage, setCurrentMessage] = useState('');
@@ -109,21 +122,21 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'cat' ? 'outline-2' : 'outline-0'
 							}`}
-							onClick={() => setSelectedAnimal('cat')}
+							onClick={() => {setSelectedAnimal('cat'); setConfigId(configs['cat'])}}
 						/>
 						<img
 							src="bee.jpg"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'bee' ? 'outline-2' : 'outline-0'
 							}`}
-							onClick={() => setSelectedAnimal('bee')}
+							onClick={() => {setSelectedAnimal('bee'); setConfigId(configs['bee'])}}
 						/>
 						<img
 							src="frog.png"
 							className={`h-12 w-12 cursor-pointer outline outline-white outline-offset-2 transition-all duration-75 ${
 								selectedAnimal === 'frog' ? 'outline-2' : 'outline-0'
 							}`}
-							onClick={() => setSelectedAnimal('frog')}
+							onClick={() => {setSelectedAnimal('frog'); setConfigId(configs['frog'])}}
 						/>
 					</div>
 					<button
@@ -159,7 +172,7 @@ export default function ChatCompoennt({ selected }: { selected: string | string[
 								connect()
 									.then(() => {
 										setSessionStarted(true);
-                                        setPreviousSelectedAnimal(selectedAnimal);
+										setPreviousSelectedAnimal(selectedAnimal);
 									})
 									.catch((err) => {
 										console.log(err);
