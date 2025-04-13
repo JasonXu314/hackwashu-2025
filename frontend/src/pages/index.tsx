@@ -18,8 +18,8 @@ const Home = () => {
 					Talk to someone who <span className="text-primary">truly</span> listens
 				</p>
 				<p className="text-neutral-200 text-xl">
-					An emotionally intelligent AI therapist that understands your tone, not just your words. Built with real-time emotion sensing from your
-					voice.
+				Mindcraft blends well-being with Minecraft, letting users talk to AI-powered roles — like a therapist, friend, or coach — each reimagined
+					as a unique, mob-themed character.
 				</p>
 				<Link className='bg-primary py-4 px-12 w-fit text-white rounded-full font-bold text-xl hover:bg-primaryhover' href="chat">
 					Start chatting
