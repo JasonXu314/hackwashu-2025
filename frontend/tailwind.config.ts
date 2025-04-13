@@ -13,7 +13,7 @@ const config: Config = {
 				fredoka: ['Fredoka', 'sans-serif'],
 			},
             colors: {
-                primary: '#44D482',
+                primary: '#41e67f',
                 primaryhover: '#2AB868',
                 darkgray: '#1A1A1A',
             }

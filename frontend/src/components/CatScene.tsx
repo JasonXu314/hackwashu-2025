@@ -55,7 +55,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children, playing }) => {
       'Calico_Sit.glb',
       (gltf) => {
         scene.add(gltf.scene);
-        gltf.scene.rotation.y = Math.PI + 0.3;
+        gltf.scene.rotation.y = Math.PI + 0.5;
         gltf.scene.rotation.x = 0.2;
         gltf.scene.position.y = -0.7;
         gltf.scene.position.x = -0.05;
