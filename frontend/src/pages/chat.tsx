@@ -1,11 +1,7 @@
-// ./pages/index.tsx
-
 import { fetchAccessToken } from 'hume';
 import { InferGetServerSidePropsType } from 'next';
 import { VoiceProvider } from '@humeai/voice-react';
-import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import ChatCompoennt from '@/components/ChatComponent';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 

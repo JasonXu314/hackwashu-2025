@@ -4,13 +4,12 @@ import Logo from '@/components/Logo';
 import UserCamera from '@/components/UserCamera';
 import api from '@/lib/axiosConfig';
 import { TextareaAutosize } from '@mui/material';
-import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Mic, MicOff, PhoneCall } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useVoice, VoiceReadyState } from '@humeai/voice-react';
 import { ImPhoneHangUp } from 'react-icons/im';
 import SummaryModal from '@/components/SummaryModal';
 import { WandSparkles } from 'lucide-react';
-import { setConfig } from 'next/config';
 import { Loader2 } from 'lucide-react';
 
 const configs = {
