@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, ReactNode } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 interface ThreeSceneProps {
   children?: ReactNode;
@@ -26,22 +27,27 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
 			antialias: true,
 			alpha: true
 		});
+
+    const controls = new OrbitControls( camera, renderer.domElement );
 		renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
 		containerRef.current.appendChild(renderer.domElement);
 
-		const light = new THREE.DirectionalLight(0xffffff, 5);
+    const light = new THREE.DirectionalLight("#e6f2fd", 3);
+    const light2 = new THREE.DirectionalLight("#e6f2fd", 3);
+    const ambientLight = new THREE.AmbientLight("#e6f2fd", 1)
 		light.position.set(-5, 5, 5);
-		scene.add(light);
+    light2.position.set(5, 5, 5);
+		scene.add(light, light2, ambientLight);
 
 		const clock = new THREE.Clock();
 
 		loader.load(
-			'Calico.glb',
+			'Calico_Sit.glb',
 			(gltf) => {
 				scene.add(gltf.scene);
-				gltf.scene.rotation.y = Math.PI + 0.2;
+				gltf.scene.rotation.y = Math.PI + 0.3;
 				gltf.scene.rotation.x = 0.2;
-				gltf.scene.position.y = -0.3;
+				gltf.scene.position.y = -0.7;
 				gltf.scene.position.x = -0.05;
 
 				if (gltf.animations.length > 0) {
@@ -70,6 +76,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
 		const animate = () => {
 			requestAnimationFrame(animate);
 			const delta = clock.getDelta();
+      controls.update();
 			mixerRef.current?.update(delta);
 			renderer.render(scene, camera);
 		};
@@ -97,6 +104,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ children }) => {
         ref={containerRef}
         className="w-full h-full bg-neutral-200 rounded-3xl relative"
       >
+        <button onClick={ talk }>test</button>
         {/* Render children as an overlay */}
         {children && (
           <div className="">
