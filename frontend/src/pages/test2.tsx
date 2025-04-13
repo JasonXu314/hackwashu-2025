@@ -8,38 +8,60 @@ const Test2: React.FC = () => {
 			.getUserMedia({ audio: true })
 			.then(async (stream) => {
 				const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!);
-				const ctx = new AudioContext();
-				console.log(ctx);
+				const ctx = new AudioContext({ sampleRate: 16_000 });
 				await ctx.audioWorklet.addModule(GeminiProcessor);
-				console.log('added');
-
-				ws.onopen = () => console.log('open');
-				ws.onerror = (err) => console.error(err);
 
 				const src = ctx.createMediaStreamSource(stream);
 
 				const node = new AudioWorkletNode(ctx, 'gemini-processor');
 				src.connect(node);
 
+				node.port.onmessageerror = (err) => console.error(err);
 				node.port.onmessage = (evt) => {
-					console.log(evt);
-
-					const buf: ArrayBuffer = evt.data;
+					const buf: ArrayBuffer = evt.data.data;
 
 					ws.send(toB64(buf));
+				};
+
+				let playing = false;
+				const buffer: Float32Array[] = [];
+
+				const flush = async () => {
+					playing = true;
+
+					while (buffer.length > 0) {
+						const chunk = buffer.shift()!;
+
+						const buf = ctx.createBuffer(1, chunk.length, 24_000);
+						buf.copyToChannel(chunk, 0);
+
+						const src = ctx.createBufferSource();
+						src.buffer = buf;
+
+						src.connect(ctx.destination);
+						src.start(0);
+
+						await new Promise<void>((resolve) =>
+							src.addEventListener(
+								'ended',
+								() => {
+									src.disconnect(ctx.destination);
+									resolve();
+								},
+								{ once: true }
+							)
+						);
+					}
+
+					playing = false;
 				};
 
 				ws.addEventListener('message', (evt) => {
 					const chunk = toF32Audio(evt.data);
 
-					const buf = ctx.createBuffer(1, chunk.length, 24_000);
-					buf.copyToChannel(chunk, 0);
+					buffer.push(chunk);
 
-					const src = ctx.createBufferSource();
-					src.buffer = buf;
-
-					src.connect(ctx.destination);
-					src.start(0);
+					if (!playing) flush();
 				});
 			})
 			.catch((err) => {
