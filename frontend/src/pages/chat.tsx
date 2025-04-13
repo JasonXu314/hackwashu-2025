@@ -1,38 +1,35 @@
 // ./pages/index.tsx
-import Controls from '@/components/Controls';
-import Messages from '@/components/Messages';
-import { fetchAccessToken } from 'hume';
-import { VoiceProvider } from '@humeai/voice-react';
-import { InferGetServerSidePropsType } from 'next';
-import Logo from '@/components/Logo';
 import Scene from '@/components/CatScene';
 import ChatMessage, { Message } from '@/components/ChatMessage';
+import Logo from '@/components/Logo';
 import UserCamera from '@/components/UserCamera';
-import { LogOut, Mic, Send, MicOff, PhoneCall } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import { TextareaAutosize } from '@mui/material';
 import { GeminiProcessor } from '@/lib/GeminiProcessor';
 import { toB64, toF32Audio } from '@/lib/utils';
+import { TextareaAutosize } from '@mui/material';
+import { fetchAccessToken } from 'hume';
+import { LogOut, Mic, MicOff, PhoneCall } from 'lucide-react';
+import { InferGetServerSidePropsType } from 'next';
+import { useCallback, useState } from 'react';
 
 export const getServerSideProps = async () => {
 	const accessToken = await fetchAccessToken({
 		apiKey: String(process.env.HUME_API_KEY),
-		secretKey: String(process.env.HUME_SECRET_KEY),
+		secretKey: String(process.env.HUME_SECRET_KEY)
 	});
 
 	if (!accessToken) {
 		return {
 			redirect: {
 				destination: '/error',
-				permanent: false,
-			},
+				permanent: false
+			}
 		};
 	}
 
 	return {
 		props: {
-			accessToken,
-		},
+			accessToken
+		}
 	};
 };
 
@@ -66,13 +63,14 @@ export default function Page({ accessToken }: PageProps) {
 	};
 
 	const startSession = useCallback(() => {
-        setSessionStarted(true);
+		setSessionStarted(true);
 		navigator.mediaDevices
 			.getUserMedia({ audio: true })
 			.then(async (stream) => {
 				const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!);
 				const ctx = new AudioContext({ sampleRate: 16_000 });
 				await ctx.audioWorklet.addModule(GeminiProcessor);
+				await new Promise((resolve) => ws.addEventListener('open', resolve, { once: true }));
 
 				const src = ctx.createMediaStreamSource(stream);
 
@@ -231,3 +229,4 @@ export default function Page({ accessToken }: PageProps) {
 		</div>
 	);
 }
+
